@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">AnyX</string>
+
+    <string name="file">File</string>
+    <string name="image">Photos</string>
+    <string name="video">Videos</string>
+    <string name="song">Song</string>
+    <string name="app">App</string>
+    <string name="home">Home</string>
+    <string name="send">Send</string>
+    <string name="receive">Receive</string>
+    <string name="settings">Settings</string>
+    <string name="search_peers">Search Peers</string>
+    <string name="my_device_address">My Address</string>
+
+    <string name="sort_order_by_a_to_z">A-Z</string>
+    <string name="sort_order_by_size">Size</string>
+    <string name="sort_order_by_last_modified">Last Modified</string>
+
+    <string name="AnyX_needs_these_permissions"><b>AnyX</b> needs these <b>permissions</b></string>
+
+    <string name="sort_order_descending">Descending</string>
+
+    <string name="send_connection_signal">Send Connection Signal</string>
+
+    <string name="speed">Speed</string>
+    <string name="total">Total</string>
+    <string name="received">Received</string>
+
+    <string name="checking_permissions">Checking Permissions</string>
+    <string name="android_location_access">Android Location Access</string>
+    <string name="android_storage_access">Access files</string>
+    <string name="storage_permission_reason">For accessing files and media</string>
+    <string name="permission_title">AnyX needs following permission to function properly</string>
+    <string name="checking_states">Checking States</string>
+    <string name="grant">Allow</string>
+    <string name="granted">Granted</string>
+    <string name="next">Next</string>
+    <string name="exit">Exit</string>
+    <string name="select_items">Select Items</string>
+    <string name="select_all">Select All</string>
+    <string name="clear_all">Clear All</string>
+    <string name="please_turn_on_these_belows">! Please turn on these manually</string>
+    <string name="_settings">Settings</string>
+    <string name="location_disabled">Location Disabled</string>
+    <string name="location_enabled">Location Enabled</string>
+    <string name="connecting">Connecting…</string>
+    <string name="wifi_disabled">Wifi Disabled</string>
+    <string name="wifi_enabled">Wifi enabled</string>
+
+    <string name="searching_devices">Searching Sender</string>
+    <string name="waiting_device">Waiting Device</string>
+
+    <string name="sure_connecting">Confirm connection to</string>
+    <string name="name">Name:</string>
+    <string name="address">Address:</string>
+
+    <string name="consider_states_enabling">Consider turning on below services</string>
+    <string name="lets_go">Let\'s go</string>
+    <string name="bluetooth_enabled">Bluetooth Enabled</string>
+    <string name="bluetooth_disabled">Bluetooth Disabled</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_permission">PermissionActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+</resources>

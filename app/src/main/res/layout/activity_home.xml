@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.HomeActivity">
+
+    <Button
+        android:id="@+id/activity_home_send_action"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/large"
+        android:layout_marginEnd="@dimen/medium"
+        android:text="Send"
+        app:icon="@drawable/ic_baseline_arrow_upward_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/activity_home_receive_action"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/activity_home_receive_action"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium"
+        android:layout_marginEnd="@dimen/large"
+        android:text="Receive"
+        app:icon="@drawable/ic_baseline_arrow_downward_24"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_home_send_action"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/activity_home_send_action"
+        app:layout_constraintTop_toTopOf="@+id/activity_home_send_action" />
+</androidx.constraintlayout.widget.ConstraintLayout>

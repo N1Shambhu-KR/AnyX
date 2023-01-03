@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/large"
+    android:layout_marginTop="@dimen/large"
+    android:layout_marginEnd="@dimen/large"
+    android:orientation="vertical"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="@dimen/default_icon_size_medium"
+            android:layout_height="@dimen/default_icon_size_medium"
+            android:background="@drawable/circle_bg">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="3"
+                android:textAlignment="center" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/medium"
+            android:layout_marginEnd="@dimen/larger"
+            android:layout_weight="1"
+            android:text="Nearby devices"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/larger"
+        android:layout_marginEnd="@dimen/larger"
+        android:text="AnyX needs nearby devices permission to work with newer devices"
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/activity_permission_access_nearby_devices"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/larger"
+        android:layout_marginTop="@dimen/small"
+        android:layout_marginEnd="@dimen/larger"
+        android:text="Grant access"
+        app:icon="@drawable/ic_baseline_near_me_24"
+        app:iconGravity="start" />
+
+</LinearLayout>
