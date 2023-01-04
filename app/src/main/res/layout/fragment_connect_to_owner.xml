@@ -21,16 +21,24 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_connect_to_owner_signal_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <com.a.anyx.SignalRipple
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:signalType="transmit" />
+        <com.a.anyx.view.SignalRipple
+            android:id="@+id/signalRipple2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:signalStrokeWidth="10dp"
+            app:signalType="receive" />
 
-    </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

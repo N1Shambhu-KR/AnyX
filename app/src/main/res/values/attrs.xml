@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <declare-styleable name="SignalRipple">
 
         <attr name="signalType" format="enum">
+
             <enum name="transmit" value="0"/>
             <enum name="receive" value="1"/>
         </attr>
 
+        <attr name="signalStrokeWidth" format="dimension"/>
+
+        <attr name="idleRadius" format="dimension"/>
+
+        <attr name="signalColor" format="color"/>
     </declare-styleable>
 </resources>

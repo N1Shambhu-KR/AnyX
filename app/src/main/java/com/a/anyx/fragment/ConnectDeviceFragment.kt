@@ -2,6 +2,7 @@ package com.a.anyx.fragment
 
 import android.annotation.SuppressLint
 import android.content.*
+import android.graphics.PointF
 import android.net.wifi.p2p.*
 import android.os.*
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.a.anyx.P2pBroadcastReceiver
 import com.a.anyx.R
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -27,6 +29,9 @@ class ConnectDeviceFragment(): BaseFragment() {
     private lateinit var wifiP2pManager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
 
+    private var occupiedPointF:ArrayList<PointF> = ArrayList()
+
+    private lateinit var signalHolder:ConstraintLayout
 
     companion object{
 
@@ -94,52 +99,6 @@ class ConnectDeviceFragment(): BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*deviceListView =  view.findViewById<ListView>(R.id.fragment_wait_device_searching_result).apply {
-
-            adapter = deviceAdapter
-
-            setOnItemClickListener { parent, view, position, id ->
-
-                val config = WifiP2pConfig()
-                config.deviceAddress = devices[position].deviceAddress
-
-                wifiP2pManager.connect(channel,config,object :WifiP2pManager.ActionListener{
-
-                    override fun onFailure(p0: Int) {
-
-                    }
-
-                    override fun onSuccess() {
-                        Toast.makeText(requireContext(),"conn started",Toast.LENGTH_SHORT).show()
-                    }
-                })
-            }
-        }
-
-        deviceNames.apply {
-            add("hjgv")
-            add("ggggfg")
-            add("kjhbhjhj")
-            add("gfgcfgcgfchgc")
-            add("bjbbjhbb")
-            add("jgvhgggfcc")
-            add("vfgcgf")
-            add("ghvghcgc")
-            add("ggfdxfdxfx")
-            add("gvghvhvchchg")
-            add("fcfgcncfc")
-            add("hcfccgfchch")
-            add("hjvghvfcf")
-            add("vjcdfxfchmc")
-            add("ffcfgdxfdxd")
-            add("gcfcfcfgxxxf")
-            add("gfgfcfcfxfxf")
-            add("xxffzfzdx")
-        }
-
-        deviceAdapter.notifyDataSetChanged()
-
-        searchingIndic = view.findViewById(R.id.fragment_wait_device_searching_indic)*/
     }
 
     override fun onPause() {
@@ -202,5 +161,7 @@ class ConnectDeviceFragment(): BaseFragment() {
     fun onDiscoveryStop(){
         //searchingIndic.visibility = View.GONE
     }
+
+    //helper functions
 
 }

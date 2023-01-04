@@ -280,6 +280,7 @@ class StateResolverFragment : BaseFragment() {
             container.setCardBackgroundColor(primaryContainerColor)
             stateText.setText(resId)
             stateText.setTextColor(primaryColor)
+
         } else {
 
             container.setCardBackgroundColor(errorContainerColor)

@@ -1,18 +1,12 @@
-package com.a.anyx
+package com.a.anyx.view
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.drawable.Drawable
-import android.text.TextPaint
+import android.graphics.*
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
-import android.view.animation.AlphaAnimation
+import com.a.anyx.R
 
 
 class SignalRipple : View {
@@ -26,13 +20,26 @@ class SignalRipple : View {
     private var signalColor:Int = 0
 
     private lateinit var radiusAnimator:ValueAnimator
-    private lateinit var alphaAnimation:ValueAnimator
+    private lateinit var secondaryRadiusAnimator:ValueAnimator
 
-    private var radius:Float = 0.0f
-    private var colorAlpha:Float = 1.0f
+    private lateinit var alphaAnimation:ValueAnimator
+    private lateinit var secondaryAlphaAnimator: ValueAnimator
+
+    private var animatedAlpha:Int = 0
+    private var secondaryAnimatedAlpha:Int = 0
+
+    private var animatedRadius:Float = 0f
+    private var secondaryRadius:Float = 0f
+
+    private var strokeWidth:Float = 0f
+
+    private var idleRadius:Float = 0f
+
+    private val rippleAnimationDuration:Long = 2000L
 
     constructor(context: Context) : super(context) {
         init(null, 0)
+
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -49,15 +56,19 @@ class SignalRipple : View {
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
 
-        val typedArray = context.obtainStyledAttributes(attrs,R.styleable.SignalRipple,0,0)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.SignalRipple,0,0)
 
         try {
 
             signalType = typedArray.getInt(R.styleable.SignalRipple_signalType, TRANSMIT)
 
-            signalColor = getRuntimeValue(com.google.android.material.R.attr.colorPrimary)
+            signalColor = typedArray.getColor(R.styleable.SignalRipple_signalColor,getRuntimeValue(
+                com.google.android.material.R.attr.colorPrimary))
 
-            radius = dp2float(32f)
+            strokeWidth = typedArray.getDimension(R.styleable.SignalRipple_signalStrokeWidth,dp2float(10f))
+
+            idleRadius = typedArray.getDimension(R.styleable.SignalRipple_idleRadius,dp2float(32f))
+
         }finally {
             typedArray.recycle()
         }
@@ -121,7 +132,71 @@ class SignalRipple : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        radiusAnimator = ValueAnimator.ofFloat()
+        //primary wave animator
+        radiusAnimator = ValueAnimator.ofFloat(0f,Math.max(w,h).toFloat()).apply {
+
+           duration = rippleAnimationDuration
+           repeatCount = ValueAnimator.INFINITE
+
+            addUpdateListener {
+
+                animatedRadius = it.animatedValue as Float
+                postInvalidate()
+
+            }
+        }
+
+        //secondary radius animator
+
+        secondaryRadiusAnimator = ValueAnimator.ofFloat(0f,Math.max(w,h).toFloat()).apply {
+
+            duration = rippleAnimationDuration
+            repeatCount = ValueAnimator.INFINITE
+            startDelay = rippleAnimationDuration/4
+
+            addUpdateListener {
+
+                secondaryRadius = it.animatedValue as Float
+                postInvalidate()
+            }
+
+        }
+
+        //alpha animation
+
+        alphaAnimation = ValueAnimator.ofInt(255,0).apply {
+
+            duration = rippleAnimationDuration
+            repeatCount = ValueAnimator.INFINITE
+
+            addUpdateListener {
+
+                animatedAlpha = it.animatedValue as Int
+                postInvalidate()
+            }
+        }
+
+        //secondary alpha
+
+        secondaryAlphaAnimator = ValueAnimator.ofInt(255,0).apply {
+
+            duration = rippleAnimationDuration
+            repeatCount = ValueAnimator.INFINITE
+            startDelay = rippleAnimationDuration/4
+
+            addUpdateListener {
+
+                secondaryAnimatedAlpha = it.animatedValue as Int
+                postInvalidate()
+            }
+        }
+
+
+        radiusAnimator.start()
+        secondaryRadiusAnimator.start()
+        alphaAnimation.start()
+        secondaryAlphaAnimator.start()
+
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -138,11 +213,7 @@ class SignalRipple : View {
 
         val paint = Paint().also {
 
-            val r = (signalColor shr 16) and 0xFF
-            val g = (signalColor shr 8) and 0xFF
-            val b = (signalColor ) and 0xFF
-
-            it.color = Color.argb(255,r,g,b)
+            it.color = signalColor
         }
 
         cx+=paddingLeft
@@ -151,9 +222,12 @@ class SignalRipple : View {
         cy+=paddingTop
         cy-=paddingBottom
 
-        canvas.drawCircle(cx,cy, 100f,paint)
+        canvas.drawCircle(cx,cy, animatedRadius,paint.apply { alpha = animatedAlpha })
+
+        canvas.drawCircle(cx,cy,secondaryRadius,paint.apply { alpha = secondaryAnimatedAlpha })
 
     }
+
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)

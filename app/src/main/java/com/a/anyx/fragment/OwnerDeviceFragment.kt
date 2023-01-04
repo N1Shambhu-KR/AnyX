@@ -68,7 +68,7 @@ class OwnerDeviceFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        searchingIndic = view.findViewById(R.id.fragment_wait_device_searching_indic)
+
     }
 
 
@@ -115,11 +115,11 @@ class OwnerDeviceFragment : BaseFragment() {
 
     fun onDiscoveryStart(){
         Toast.makeText(requireContext(),"start",Toast.LENGTH_SHORT).show()
-        searchingIndic.visibility = View.VISIBLE
+
     }
 
     fun onDiscoveryStop(){
-        searchingIndic.visibility = View.GONE
+
     }
 
 
