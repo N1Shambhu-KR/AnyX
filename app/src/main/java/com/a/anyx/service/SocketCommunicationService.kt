@@ -2,62 +2,124 @@ package com.a.anyx.service
 
 import android.app.Service
 import android.content.Intent
-import android.net.wifi.p2p.WifiP2pInfo
 import android.os.Binder
+import android.os.Handler
 import android.os.IBinder
-import com.a.anyx.fragment.OwnerDeviceFragment
-import java.io.File
+import android.os.Looper
+import com.a.anyx.interfaces.ConnectionListener
+import com.a.anyx.interfaces.TransferEventListener
+import com.a.anyx.util.XFer
+import java.io.IOException
+import java.net.ServerSocket
+import java.net.Socket
+import java.net.SocketException
+import java.util.concurrent.Executors
 
+class SocketCommunicationService : Service() {
 
-class SocketCommunicationService() : Service() {
+    private lateinit var serverSocket: ServerSocket
+    private lateinit var socket: Socket
 
-    interface TransferEventListener{
+    private var transferEventListener:TransferEventListener? = null
+    private var connectionListener: ConnectionListener? = null
 
-        fun onStartTransfer(file: File)
+    inner class LocalBinder:Binder(){
 
-        fun onFinishTransfer(file: File)
+        fun getService():SocketCommunicationService{
+            return this@SocketCommunicationService
+        }
+    }
 
-        fun onBytesTransferred(file: File,bytesTransferred:Int)
+    private val binder = LocalBinder()
 
-        fun onBytesReceived(file: File,bytesReceived:Int)
+    override fun onBind(intent: Intent): IBinder = binder
 
-        fun onFinishReceive(file: File)
+    fun createServer(){
 
-        fun onStartReceive(file: File)
+        Executors.newSingleThreadExecutor().execute {
+
+            serverSocket = ServerSocket(8888)
+            serverSocket.soTimeout = 15000
+            serverSocket.reuseAddress = true
+
+            socket = serverSocket.accept()
+
+                connectionListener?.onConnection()
+        }
+    }
+
+    fun createClient(host:String){
+
+        Executors.newSingleThreadExecutor().execute {
+
+            while (true){
+
+                try {
+
+                    socket = Socket(host, PORT)
+                    break
+                }catch (s:SocketException){
+
+                    Thread.sleep(1000)
+                }catch (i:IOException){
+                    break
+                }
+            }
+
+                connectionListener?.onConnection()
+
+        }
+
+    }
+
+    fun send(filesArray: ArrayList<String>){
+
+        socket.also {
+
+            Executors.newSingleThreadExecutor().execute {
+                val transfer = XFer(it.getOutputStream(),it.getInputStream(),transferEventListener)
+                transfer.send(filesArray)
+            }
+
+        }
+    }
+
+    fun receive(){
+
+        socket.also {
+
+            Executors.newSingleThreadExecutor().execute {
+                val transfer = XFer(it.getOutputStream(),it.getInputStream(),transferEventListener)
+                transfer.receive()
+            }
+
+        }
+    }
+
+    fun setTransferEventListener(listener: TransferEventListener){
+
+        transferEventListener = listener
+    }
+
+    fun removeTransferEventListener(){
+
+        if (transferEventListener != null)
+            transferEventListener = null
+    }
+
+    fun setConnectionListener(c:ConnectionListener){
+        connectionListener = c
+    }
+
+    fun removeConnectionListener(){
+
+        if (connectionListener != null){
+            connectionListener = null
+        }
     }
 
     companion object{
 
         const val PORT = 8888
-    }
-
-    inner class CommunicationBinder():Binder(){
-
-        fun getService():SocketCommunicationService = this@SocketCommunicationService
-    }
-
-    private lateinit var transferEventListener:TransferEventListener
-
-    fun setTransferListener(transferEventListener: TransferEventListener){
-        this.transferEventListener = transferEventListener
-    }
-
-    override fun onBind(intent: Intent?): IBinder?{
-
-        val info = intent?.getParcelableExtra<WifiP2pInfo>(OwnerDeviceFragment.WIFI_P2P_INFO)!!
-
-
-        return CommunicationBinder()
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-
-        return START_STICKY
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
     }
 }

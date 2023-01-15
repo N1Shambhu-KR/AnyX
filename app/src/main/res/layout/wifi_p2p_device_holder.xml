@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/base"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/tiny"
+    android:layout_marginTop="@dimen/tiny"
+    android:layout_marginEnd="@dimen/tiny"
+    android:layout_marginBottom="@dimen/tiny"
+    android:foreground="?attr/selectableItemBackground">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/wifi_p2p_device_holder_device_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium"
+        android:layout_marginTop="@dimen/medium"
+        android:layout_marginEnd="@dimen/medium"
+        android:layout_marginBottom="@dimen/tiny"
+        android:singleLine="true"
+        android:text="TextView"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        app:layout_constraintBottom_toTopOf="@+id/wifi_p2p_device_holder_device_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/wifi_p2p_device_holder_device_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium"
+        android:layout_marginTop="@dimen/tiny"
+        android:layout_marginEnd="@dimen/medium"
+        android:layout_marginBottom="@dimen/medium"
+        android:singleLine="true"
+        android:text="TextView"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wifi_p2p_device_holder_device_name" />
+</androidx.constraintlayout.widget.ConstraintLayout>

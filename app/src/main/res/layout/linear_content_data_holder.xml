@@ -2,57 +2,58 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="@dimen/medium"
+    android:id="@+id/base"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/medium"
     android:layout_marginTop="@dimen/tiny"
     android:layout_marginEnd="@dimen/medium"
     android:layout_marginBottom="@dimen/tiny"
-    android:foreground="?attr/selectableItemBackground">
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="@dimen/medium">
 
-        <TextView
-            android:id="@+id/linear_content_data_holder_size"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/line"
-            android:layout_marginBottom="@dimen/tiny"
-            android:singleLine="true"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/linear_content_data_holder_name"
-            app:layout_constraintStart_toEndOf="@+id/linear_content_data_holder_icon"
-            app:layout_constraintStart_toStartOf="@+id/linear_content_data_holder_name"
-            app:layout_constraintTop_toBottomOf="@+id/linear_content_data_holder_name" />
+    <TextView
+        android:id="@+id/linear_content_data_holder_size"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/line"
+        android:layout_marginBottom="@dimen/tiny"
+        android:singleLine="true"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/linear_content_data_holder_name"
+        app:layout_constraintStart_toEndOf="@+id/linear_content_data_holder_icon"
+        app:layout_constraintStart_toStartOf="@+id/linear_content_data_holder_name"
+        app:layout_constraintTop_toBottomOf="@+id/linear_content_data_holder_name" />
 
-        <TextView
-            android:id="@+id/linear_content_data_holder_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/medium"
-            android:layout_marginTop="@dimen/tiny"
-            android:layout_marginEnd="@dimen/large"
-            android:layout_marginBottom="@dimen/line"
-            android:singleLine="true"
-            android:text="TextView"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            app:layout_constraintBottom_toTopOf="@+id/linear_content_data_holder_size"
-            app:layout_constraintEnd_toStartOf="@+id/checker"
-            app:layout_constraintStart_toEndOf="@+id/linear_content_data_holder_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/linear_content_data_holder_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium"
+        android:layout_marginTop="@dimen/tiny"
+        android:layout_marginEnd="@dimen/large"
+        android:layout_marginBottom="@dimen/line"
+        android:singleLine="true"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        app:layout_constraintBottom_toTopOf="@+id/linear_content_data_holder_size"
+        app:layout_constraintEnd_toStartOf="@+id/checker"
+        app:layout_constraintStart_toEndOf="@+id/linear_content_data_holder_icon"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/linear_content_data_holder_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="@dimen/tiny"
-            android:layout_marginTop="@dimen/tiny"
-            android:layout_marginBottom="@dimen/tiny"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_baseline_folder_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/linear_content_data_holder_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="@dimen/tiny"
+        android:layout_marginTop="@dimen/tiny"
+        android:layout_marginBottom="@dimen/tiny"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_baseline_folder_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/selection_overlay"
@@ -69,12 +70,12 @@
     </FrameLayout>
 
     <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/checker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/checker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

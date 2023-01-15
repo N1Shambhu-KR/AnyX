@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable-v23/circular_checkbox_checked.xml" value="0.2465" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/bg_wifi_p2p_device_layout.xml" value="0.2465" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/blank.xml" value="0.2265" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/checker_radio_button.xml" value="0.2365" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/checker_radio_checked.xml" value="0.2365" />
@@ -11,11 +13,13 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/circular_check_button.xml" value="0.2265" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/circular_checkbox.xml" value="0.2265" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/circular_checkbox_checked.xml" value="0.2265" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/circular_checkbox_pressed.xml" value="0.229" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/circular_checkbox_unchecked.xml" value="0.2" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/ic_baseline_audiotrack_24.xml" value="0.2265" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/ic_reference.xml" value="0.2265" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/round_check_background.xml" value="0.2265" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/drawable/welcome_background.xml" value="0.2265" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/a_device_layout.xml" value="0.264" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/activity_connection_session.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/activity_connector.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/activity_content_selector.xml" value="0.10459183673469388" />
@@ -39,16 +43,19 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/connecting_to_device_succed.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/connection_dialog.xml" value="0.264" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/content_data_holder.xml" value="0.2222222222222222" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/content_detail_bottom_dialog.xml" value="0.264" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/content_holder.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/dialog_permission_access.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_app.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_audio.xml" value="0.2222222222222222" />
-        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_connect_to_owner.xml" value="0.21805555555555556" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_connect_to_owner.xml" value="0.176" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_file.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_image.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_owner_device.xml" value="0.21805555555555556" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_owner_device1.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_post_connection.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_pre_connection.xml" value="0.2" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_search_device.xml" value="0.152" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_selection_app.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_selection_audio.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/fragment_selection_file.xml" value="0.2222222222222222" />
@@ -67,6 +74,7 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/layout_typedata_holder.xml" value="0.2" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/linear_content_data_holder.xml" value="0.4" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/sample_signal_ripple.xml" value="0.2222222222222222" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/layout/wifi_p2p_device_holder.xml" value="1.0" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/menu/content_nav_menu.xml" value="0.2222222222222222" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/AnyX/app/src/main/res/menu/home_toolbar_menu.xml" value="0.2222222222222222" />

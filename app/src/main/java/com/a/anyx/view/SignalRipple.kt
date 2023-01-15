@@ -6,7 +6,9 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import android.widget.Toast
 import com.a.anyx.R
+import java.util.concurrent.Executors
 
 
 class SignalRipple : View {
@@ -20,22 +22,19 @@ class SignalRipple : View {
     private var signalColor:Int = 0
 
     private lateinit var radiusAnimator:ValueAnimator
-    private lateinit var secondaryRadiusAnimator:ValueAnimator
 
     private lateinit var alphaAnimation:ValueAnimator
-    private lateinit var secondaryAlphaAnimator: ValueAnimator
 
     private var animatedAlpha:Int = 0
-    private var secondaryAnimatedAlpha:Int = 0
-
     private var animatedRadius:Float = 0f
-    private var secondaryRadius:Float = 0f
 
     private var strokeWidth:Float = 0f
 
     private var idleRadius:Float = 0f
 
     private val rippleAnimationDuration:Long = 2000L
+
+    private var canvas:Canvas?=null
 
     constructor(context: Context) : super(context) {
         init(null, 0)
@@ -63,7 +62,7 @@ class SignalRipple : View {
             signalType = typedArray.getInt(R.styleable.SignalRipple_signalType, TRANSMIT)
 
             signalColor = typedArray.getColor(R.styleable.SignalRipple_signalColor,getRuntimeValue(
-                com.google.android.material.R.attr.colorPrimary))
+                androidx.appcompat.R.attr.colorPrimary))
 
             strokeWidth = typedArray.getDimension(R.styleable.SignalRipple_signalStrokeWidth,dp2float(10f))
 
@@ -72,6 +71,8 @@ class SignalRipple : View {
         }finally {
             typedArray.recycle()
         }
+
+
     }
 
     private fun getRuntimeValue(attrId:Int):Int{
@@ -132,75 +133,37 @@ class SignalRipple : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        //primary wave animator
-        radiusAnimator = ValueAnimator.ofFloat(0f,Math.max(w,h).toFloat()).apply {
+        radiusAnimator = ValueAnimator.ofFloat(0f,Math.max(width,height).toFloat()).also {
 
-           duration = rippleAnimationDuration
-           repeatCount = ValueAnimator.INFINITE
+            it.repeatCount = ValueAnimator.INFINITE
+            it.duration = rippleAnimationDuration
 
-            addUpdateListener {
+            it.addUpdateListener {
 
                 animatedRadius = it.animatedValue as Float
-                postInvalidate()
-
+                invalidate()
             }
         }
 
-        //secondary radius animator
+        alphaAnimation = ValueAnimator.ofInt(255,0).also {
 
-        secondaryRadiusAnimator = ValueAnimator.ofFloat(0f,Math.max(w,h).toFloat()).apply {
+            it.repeatCount = ValueAnimator.INFINITE
+            it.duration = rippleAnimationDuration
 
-            duration = rippleAnimationDuration
-            repeatCount = ValueAnimator.INFINITE
-            startDelay = rippleAnimationDuration/4
-
-            addUpdateListener {
-
-                secondaryRadius = it.animatedValue as Float
-                postInvalidate()
-            }
-
-        }
-
-        //alpha animation
-
-        alphaAnimation = ValueAnimator.ofInt(255,0).apply {
-
-            duration = rippleAnimationDuration
-            repeatCount = ValueAnimator.INFINITE
-
-            addUpdateListener {
+            it.addUpdateListener {
 
                 animatedAlpha = it.animatedValue as Int
-                postInvalidate()
             }
         }
-
-        //secondary alpha
-
-        secondaryAlphaAnimator = ValueAnimator.ofInt(255,0).apply {
-
-            duration = rippleAnimationDuration
-            repeatCount = ValueAnimator.INFINITE
-            startDelay = rippleAnimationDuration/4
-
-            addUpdateListener {
-
-                secondaryAnimatedAlpha = it.animatedValue as Int
-                postInvalidate()
-            }
-        }
-
 
         radiusAnimator.start()
-        secondaryRadiusAnimator.start()
         alphaAnimation.start()
-        secondaryAlphaAnimator.start()
-
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        this.canvas = canvas
 
         var cx = width/2f
         var cy = 0f
@@ -222,12 +185,28 @@ class SignalRipple : View {
         cy+=paddingTop
         cy-=paddingBottom
 
-        canvas.drawCircle(cx,cy, animatedRadius,paint.apply { alpha = animatedAlpha })
+        while (animatedRadius > 0){
 
-        canvas.drawCircle(cx,cy,secondaryRadius,paint.apply { alpha = secondaryAnimatedAlpha })
+            canvas.drawCircle(cx,cy,animatedRadius,paint.apply { alpha = animatedAlpha })
+
+            animatedRadius-=Math.max(width,height)/4
+        }
 
     }
 
+    fun stopAnimation(){
+        radiusAnimator.end()
+        alphaAnimation.end()
+        radiusAnimator.cancel()
+        alphaAnimation.cancel()
+    }
+
+    fun startAnimation(){
+
+
+        radiusAnimator.start()
+        alphaAnimation.start()
+    }
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)

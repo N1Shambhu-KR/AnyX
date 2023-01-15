@@ -29,5 +29,5 @@
         android:id="@+id/waitDeviceFragment"
         android:name="com.a.anyx.fragment.OwnerDeviceFragment"
         android:label="WaitDeviceFragment"
-        tools:layout="@layout/fragment_owner_device"/>
+        tools:layout="@layout/fragment_connect_to_owner"/>
 </navigation>

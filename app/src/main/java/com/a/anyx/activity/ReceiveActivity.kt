@@ -1,34 +1,42 @@
 package com.a.anyx.activity
 
-import android.net.wifi.p2p.WifiP2pDevice
-import android.net.wifi.p2p.WifiP2pDeviceList
-import android.net.wifi.p2p.WifiP2pInfo
-import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import com.a.anyx.R
 import com.a.anyx.fragment.*
 import com.a.anyx.interfaces.IOnFragment
-import com.a.anyx.interfaces.OnWiFiP2pChanged
+import com.a.anyx.util.StateResolver
 
-class ReceiveActivity:AppCompatActivity(),IOnFragment,OnWiFiP2pChanged,WifiP2pManager.ChannelListener{
+class ReceiveActivity:AppCompatActivity(),IOnFragment{
 
     private lateinit var currentFragment:BaseFragment
 
-    private lateinit var connectDeviceFragment: ConnectDeviceFragment
+    private lateinit var searchDeviceFragment: SearchDeviceFragment
 
+    private lateinit var stateResolver:StateResolver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receive)
 
+        stateResolver = StateResolver(this)
+
         if (savedInstanceState == null){
 
-            connectDeviceFragment = ConnectDeviceFragment()
+            searchDeviceFragment = SearchDeviceFragment()
 
-            currentFragment = connectDeviceFragment
+            if (!stateResolver.getWifiState() || !stateResolver.getLocationState() || !stateResolver.getBluetoothState()){
+
+                currentFragment = StateResolverFragment()
+            }else{
+
+            currentFragment = searchDeviceFragment
+
+            }
+
         }else{
 
             val tag = savedInstanceState.getString("curr")
@@ -44,7 +52,8 @@ class ReceiveActivity:AppCompatActivity(),IOnFragment,OnWiFiP2pChanged,WifiP2pMa
 
             addOnBackStackChangedListener {
 
-                currentFragment = supportFragmentManager.findFragmentById(R.id.activity_receive_navigator) as BaseFragment
+                currentFragment = supportFragmentManager.findFragmentById(R.id.activity_receive_navigator)!! as BaseFragment
+
             }
 
             commit {
@@ -52,6 +61,7 @@ class ReceiveActivity:AppCompatActivity(),IOnFragment,OnWiFiP2pChanged,WifiP2pMa
                 replace(R.id.activity_receive_navigator,currentFragment,currentFragment.getTAG())
             }
         }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -60,37 +70,15 @@ class ReceiveActivity:AppCompatActivity(),IOnFragment,OnWiFiP2pChanged,WifiP2pMa
         super.onSaveInstanceState(outState)
     }
 
-    //wifi p2p broadcasts
+    override fun onBackPressed() {
 
-    override fun onStateChanged() {
+        if (supportFragmentManager.backStackEntryCount > 0){
 
-        if (currentFragment is ConnectDeviceFragment) (currentFragment as ConnectDeviceFragment).onDeviceState(false)
+            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }else{
+            super.onBackPressed()
+        }
     }
-
-    override fun onThisDevice(wifiP2pDevice: WifiP2pDevice) {
-        if (currentFragment is ConnectDeviceFragment) (currentFragment as ConnectDeviceFragment).onThisDevice(wifiP2pDevice)
-    }
-
-    override fun onDiscoveryStarted() {
-        if (currentFragment is ConnectDeviceFragment) (currentFragment as ConnectDeviceFragment).onDiscoveryStart()
-    }
-
-    override fun onDiscoveryStopped() {
-        if (currentFragment is ConnectDeviceFragment) (currentFragment as ConnectDeviceFragment).onDiscoveryStop()
-    }
-
-    override fun onDeviceList(wifiP2pDeviceList: WifiP2pDeviceList) {
-        if (currentFragment is ConnectDeviceFragment) (currentFragment as ConnectDeviceFragment).onDeviceList(wifiP2pDeviceList)
-    }
-
-    override fun onConnection(wifiP2pInfo: WifiP2pInfo) {
-        if (currentFragment is ConnectDeviceFragment) (currentFragment as ConnectDeviceFragment).onConnection(wifiP2pInfo)
-    }
-
-    override fun onChannelDisconnected() {
-        //
-    }
-
     override fun onFragment(fragment: Fragment) {
 
     }

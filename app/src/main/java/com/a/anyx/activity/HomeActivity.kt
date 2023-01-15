@@ -38,7 +38,7 @@ class HomeActivity : AppCompatActivity() {
 
                 if (!(pc.hasStoragePermission() && pc.hasLocationPermission())){
                     val intentionalIntent = Intent(this@HomeActivity, PermissionActivity::class.java)
-                    intentionalIntent.putExtra(AppConstants.INTENT_CLASS, SendActivity::class.qualifiedName)
+                    intentionalIntent.putExtra(AppConstants.INTENT_CLASS, ReceiveActivity::class.qualifiedName)
                     startActivity(intentionalIntent)
 
                 }else{

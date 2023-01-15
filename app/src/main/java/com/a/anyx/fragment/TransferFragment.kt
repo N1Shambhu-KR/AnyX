@@ -11,12 +11,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.a.anyx.R
+import com.a.anyx.interfaces.ConnectionListener
+import com.a.anyx.interfaces.TransferEventListener
 import com.a.anyx.service.SocketCommunicationService
 import java.io.File
 
 
-class TransferFragment : BaseFragment(),SocketCommunicationService.TransferEventListener {
+class TransferFragment : BaseFragment(), TransferEventListener, ConnectionListener {
 
     private lateinit var socketCommunicationService: SocketCommunicationService
 
@@ -24,11 +27,22 @@ class TransferFragment : BaseFragment(),SocketCommunicationService.TransferEvent
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
 
-            val binder = service as SocketCommunicationService.CommunicationBinder
+            val binder = service as SocketCommunicationService.LocalBinder
 
             socketCommunicationService = binder.getService()
 
-            socketCommunicationService.setTransferListener(this@TransferFragment)
+            socketCommunicationService.setConnectionListener(this@TransferFragment)
+            socketCommunicationService.setTransferEventListener(this@TransferFragment)
+
+            val p2pInfo = arguments?.getParcelable<WifiP2pInfo>(P2P_INFO)!!
+
+            if (p2pInfo.isGroupOwner){
+
+                socketCommunicationService.createServer()
+            }else{
+                socketCommunicationService.createClient(p2pInfo.groupOwnerAddress.hostAddress!!)
+            }
+
 
         }
 
@@ -41,21 +55,6 @@ class TransferFragment : BaseFragment(),SocketCommunicationService.TransferEvent
         super.onCreate(savedInstanceState)
 
         val intent = Intent(context,SocketCommunicationService::class.java)
-        val info = arguments?.getParcelable<WifiP2pInfo>(OwnerDeviceFragment.WIFI_P2P_INFO)!!
-
-        if (info.isGroupOwner){
-
-            intent.putExtra(OwnerDeviceFragment.WIFI_P2P_INFO,info)
-
-            arguments?.getStringArrayList(OwnerDeviceFragment.FILE_PATHS)!!.also {
-                intent.putExtra(OwnerDeviceFragment.FILE_PATHS,it)
-            }
-
-        }else{
-
-            intent.putExtra(OwnerDeviceFragment.WIFI_P2P_INFO,info)
-
-        }
 
         requireContext().bindService(intent,serviceConnectionListener,Context.BIND_AUTO_CREATE)
     }
@@ -79,17 +78,28 @@ class TransferFragment : BaseFragment(),SocketCommunicationService.TransferEvent
         return arrayListOf()
     }
 
-    override fun onBackPressed() {
-
-    }
-
-    override fun onPermissionChanged() {
-
-    }
-
     override fun getTAG(): String? {
 
         return TAG
+    }
+
+    override fun onConnection() {
+             val transferType = arguments?.getInt(TRANSFER_TYPE)!!
+
+        if (transferType == SEND){
+
+            socketCommunicationService.send(arguments?.getStringArrayList(FILE_PATHS)!!)
+        }else{
+            socketCommunicationService.receive()
+        }
+    }
+
+    override fun onDisconnect() {
+
+    }
+
+    override fun onBackPressed(): Boolean {
+        return true
     }
 
     override fun onStartTransfer(file: File) {
@@ -116,8 +126,21 @@ class TransferFragment : BaseFragment(),SocketCommunicationService.TransferEvent
 
     }
 
+    //
+    override fun loadImage(imageView: ImageView, position: Int) {
+
+    }
+
     companion object {
 
         @JvmField val TAG:String = TransferFragment::class.simpleName!!
+
+        const val FILE_PATHS = "file_paths"
+        const val P2P_INFO = "p2p_info"
+        const val TRANSFER_TYPE = "transfer_type"
+
+        const val SEND = 1
+        const val RECEIVE = 2
     }
+
 }

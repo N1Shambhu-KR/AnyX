@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.a.anyx">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.a.anyx" >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
@@ -9,7 +10,8 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="32" />
+        android:maxSdkVersion="32"
+        android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -30,25 +32,29 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AnyX">
+        android:theme="@style/Theme.AnyX" >
+        <service
+            android:name=".service.SocketCommunicationService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+
         <activity
             android:name=".activity.ReceiveActivity"
             android:exported="false" />
-
-        <service android:name=".service.SocketCommunicationService" />
-
         <activity
-            android:name=".activity.HomeActivity"
+            android:name=".activity.SplashActivity"
             android:exported="false" />
         <activity
             android:name=".activity.SendActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PermissionActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.SplashActivity"
-            android:exported="true">
+            android:name=".activity.HomeActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

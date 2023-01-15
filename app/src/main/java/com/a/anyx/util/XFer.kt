@@ -1,18 +1,14 @@
 package com.a.anyx.util
 
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
-import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 import com.a.anyx.R
-import com.a.anyx.service.SocketCommunicationService
+import com.a.anyx.interfaces.TransferEventListener
 import java.io.*
 
 class XFer(private val output:OutputStream,
            private val input:InputStream,
-           @NonNull private val transferEventListener: SocketCommunicationService.TransferEventListener) {
+           @Nullable private val transferEventListener: TransferEventListener?) {
 
     private val dataOut:DataOutputStream = DataOutputStream(output)
     private val dataIn:DataInputStream = DataInputStream(input)
@@ -31,7 +27,7 @@ class XFer(private val output:OutputStream,
             dataOut.writeUTF(f.name)
             dataOut.writeLong(f.length())
 
-            transferEventListener.onStartTransfer(f)
+            transferEventListener?.onStartTransfer(f)
 
             val fileInputStream = FileInputStream(f)
 
@@ -42,7 +38,7 @@ class XFer(private val output:OutputStream,
                 if (readLength > 0) {
 
                     dataOut.write(buffer,0,readLength)
-                    transferEventListener.onBytesTransferred(f,readLength)
+                    transferEventListener?.onBytesTransferred(f,readLength)
                 } else{
                     break
                 }
@@ -51,7 +47,7 @@ class XFer(private val output:OutputStream,
 
             fileInputStream.close()
 
-            transferEventListener.onFinishTransfer(f)
+            transferEventListener?.onFinishTransfer(f)
 
         }
 
@@ -64,39 +60,43 @@ class XFer(private val output:OutputStream,
 
         val fileCount = dataIn.readInt()
 
-        for (i in 0..fileCount){
+        for (i in 0 until fileCount){
 
             val buffer = ByteArray(4*1024)
             var readLength = 0
 
             val fileName = dataIn.readUTF()
-            val fileLength = dataIn.readLong()
+            var fileLength = dataIn.readLong()
 
-            val f = File("${Environment.getExternalStorageDirectory()}/${R.string.app_name}/$fileName")
+            val parent = File("${Environment.getExternalStorageDirectory()}/${R.string.app_name}")
 
-            transferEventListener.onStartReceive(f)
+            if (!parent.exists()){
+                parent.mkdir()
+            }
+
+            val f = File("${Environment.getExternalStorageDirectory()}/$fileName")
+
+            transferEventListener?.onStartReceive(f)
 
             val fileOutputStream = FileOutputStream(f)
 
-            while (true){
+            while (fileLength >0){
 
-                readLength = dataIn.read(buffer)
+                readLength = dataIn.read(buffer,0,Math.min(buffer.size,fileLength.toInt()))
 
-                if (readLength > 0){
-
+                if (readLength >0){
                     fileOutputStream.write(buffer,0,readLength)
-                    transferEventListener.onBytesReceived(f,readLength)
-                }else{
-                    break
+                    transferEventListener?.onBytesReceived(f,readLength)
                 }
             }
 
             fileOutputStream.close()
 
-            transferEventListener.onFinishReceive(f)
+            transferEventListener?.onFinishReceive(f)
         }
 
         dataIn.close()
         dataOut.close()
+
     }
 }

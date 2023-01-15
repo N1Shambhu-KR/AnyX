@@ -1,10 +1,15 @@
 package com.a.anyx.fragment
 
 import android.app.Application
+import android.os.Build
 import android.os.Bundle
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,31 +19,34 @@ import com.a.anyx.content.ContentData
 import com.a.anyx.fragment.adapter.ContentDataAdapter
 import com.a.anyx.content.ContentStore
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
-
-class SongViewModel(private val app: Application): AndroidViewModel(app){
-
-    private val songData = MutableLiveData<ArrayList<ContentData>>()
-
-    val data: LiveData<ArrayList<ContentData>>
-        get() = songData
-
-    fun loadSongData(){
-
-        val store = ContentStore(app)
-
-        viewModelScope.launch {
-
-            store.collectSongs()
-             songData.value = store.getSongData()
-         }
-
-    }
-
-}
 
 
 class SongFragment : BaseFragment() {
+
+    class SongViewModel(private val app: Application): AndroidViewModel(app){
+
+        private val songData = MutableLiveData<ArrayList<ContentData>>()
+
+        val data: LiveData<ArrayList<ContentData>>
+            get() = songData
+
+        fun loadSongData(){
+
+            val store = ContentStore(app)
+
+            viewModelScope.launch {
+
+                store.collectSongs()
+                songData.value = store.getSongData()
+            }
+
+        }
+
+    }
+
 
     private lateinit var songViewModel: SongViewModel
 
@@ -54,7 +62,10 @@ class SongFragment : BaseFragment() {
 
         songViewModel = ViewModelProvider(this,
             ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(SongViewModel::class.java)
-        linearContentDataAdapter  = ContentDataAdapter(requireContext(), arrayListOf(),ContentDataAdapter.LINEAR_VIEW_TYPE)
+        linearContentDataAdapter  = ContentDataAdapter(
+            this, arrayListOf(),
+            ContentDataAdapter.LINEAR_VIEW_TYPE
+        )
 
         if (savedInstanceState == null){
 
@@ -114,12 +125,33 @@ class SongFragment : BaseFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onBackPressed() {
-
+    override fun onBackPressed(): Boolean {
+        return true
     }
 
-    override fun onPermissionChanged() {
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun loadImage(imageView: ImageView, position: Int) {
 
+        Executors.newSingleThreadExecutor().execute {
+
+            try {
+
+                val b = songViewModel.data.value?.get(position)?.uri?.let {
+                    requireContext().contentResolver.loadThumbnail(
+                        it, Size(240,320),null)
+                }
+
+                imageView.post {
+                    imageView.setImageBitmap(b)
+                }
+            }catch (e: Exception){
+
+                imageView.post {
+
+                    imageView.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_audiotrack_24))
+                }
+            }
+        }
     }
 
     companion object{

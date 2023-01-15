@@ -1,11 +1,9 @@
 package com.a.anyx.fragment.adapter
 
 import android.annotation.SuppressLint
-import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import android.util.Size
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -16,16 +14,27 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.a.anyx.R
 import com.a.anyx.content.ContentData
+import com.a.anyx.fragment.BaseFragment
+import com.a.anyx.fragment.FileFragment
+import com.a.anyx.interfaces.OnRecyclerViewItemClick
 import java.util.concurrent.Executors
 
-class ContentDataAdapter(private val applicationContext: Context, private var data: ArrayList<ContentData>, private val viewType: Int):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ContentDataAdapter(private val fragment: BaseFragment, private var data: ArrayList<ContentData>, private val viewType: Int):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object{
         const val LINEAR_VIEW_TYPE = 1
         const val GRID_VIEW_TYPE = 2
     }
 
-    private val adapterSelection = AdapterSelection()
+    private var lastSelected = -1
+
+    private val adapterSelection = AdapterSelection(false)
+
+    private var listener: OnRecyclerViewItemClick? = null
+
+    fun setRecyclerViewItemClickListener(_listener: OnRecyclerViewItemClick){
+        listener = _listener
+    }
 
     fun setData(_data: ArrayList<ContentData>){
 
@@ -53,7 +62,7 @@ class ContentDataAdapter(private val applicationContext: Context, private var da
         fun bind(position: Int){
 
             thumb.also {
-                loadThumbnailInto(it, data[position].uri!!)
+                fragment.loadImage(thumb,position)
 
             }
 
@@ -61,11 +70,20 @@ class ContentDataAdapter(private val applicationContext: Context, private var da
 
             checker.isChecked = adapterSelection.getSelected(getItemId(position))
 
+            itemView.setOnClickListener {
+
+                listener?.onItemClick(position,it)
+            }
+
             checker.setOnClickListener {
 
+                notifyItemChanged(lastSelected)
                 adapterSelection.setSelection(getItemId(position))
+                lastSelected = position
+                notifyItemChanged(lastSelected)
                 selection_overlay.visibility = if (adapterSelection.getSelected(getItemId(position))) View.VISIBLE else View.GONE
 
+                listener?.onItemClick(position,checker)
             }
 
             name.setText(data[position].name).apply {
@@ -88,7 +106,7 @@ class ContentDataAdapter(private val applicationContext: Context, private var da
         fun bind(position: Int){
 
             thumb.also {
-                loadThumbnailInto(it, data[position].uri!!)
+                fragment.loadImage(thumb,position)
 
             }
 
@@ -96,11 +114,20 @@ class ContentDataAdapter(private val applicationContext: Context, private var da
 
             checker.isChecked = adapterSelection.getSelected(getItemId(position))
 
+            itemView.setOnClickListener {
+
+                listener?.onItemClick(position,it)
+            }
+
             checker.setOnClickListener {
 
+                notifyItemChanged(lastSelected)
                 adapterSelection.setSelection(getItemId(position))
+                lastSelected = position
+                notifyItemChanged(lastSelected)
                 selection_overlay.visibility = if (adapterSelection.getSelected(getItemId(position))) View.VISIBLE else View.GONE
 
+                listener?.onItemClick(position,checker)
             }
 
         }
@@ -141,30 +168,4 @@ class ContentDataAdapter(private val applicationContext: Context, private var da
         return data[position].hashCode().toLong()
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun loadThumbnailInto(imageView: ImageView,uri:Uri){
-
-        Executors.newSingleThreadExecutor().execute {
-
-            try {
-
-                val thumb = applicationContext.contentResolver.loadThumbnail(uri,Size(240,320),null)
-
-                imageView.post {
-                    imageView.setImageBitmap(thumb)
-                }
-            }catch (e:Exception){
-
-                    val typedValues = TypedValue()
-                    val d = applicationContext.theme.getDrawable(R.drawable.ic_baseline_audiotrack_24)
-                    applicationContext.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary,typedValues,true)
-                    d.setTint(typedValues.data)
-
-                imageView.post {
-                    imageView.setImageDrawable(d)
-                }
-            }
-        }
-    }
 }

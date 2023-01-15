@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/circle_bg">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/display_icon_large"
+            android:layout_height="@dimen/display_icon_large"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_baseline_smartphone_24" />
+    </FrameLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="@dimen/tiny"
+        android:layout_marginTop="@dimen/tiny"
+        android:layout_marginEnd="@dimen/tiny"
+        android:layout_marginBottom="@dimen/tiny">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/tiny"
+            android:layout_marginTop="@dimen/tiny"
+            android:layout_marginEnd="@dimen/tiny"
+            android:layout_marginBottom="@dimen/tiny"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/a_device_layout_device_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="@dimen/tiny"
+                android:layout_marginTop="@dimen/tiny"
+                android:layout_marginEnd="@dimen/tiny"
+                android:gravity="center"
+                android:text="@string/name"
+                android:textAlignment="center" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.Icon"
+                android:id="@+id/a_device_layout_device_connect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="@dimen/tiny"
+                android:layout_marginTop="@dimen/tiny"
+                android:layout_marginEnd="@dimen/tiny"
+                android:layout_marginBottom="@dimen/tiny"
+                android:text="@string/connect"
+                app:icon="@drawable/ic_baseline_link_24"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

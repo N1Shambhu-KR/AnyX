@@ -1,10 +1,15 @@
 package com.a.anyx.fragment
 
 import android.app.Application
+import android.os.Build
 import android.os.Bundle
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,31 +17,35 @@ import com.a.anyx.R
 import com.a.anyx.content.ContentData
 import com.a.anyx.content.ContentStore
 import com.a.anyx.fragment.adapter.ContentDataAdapter
+import com.a.anyx.interfaces.OnRecyclerViewItemClick
 import kotlinx.coroutines.launch
-
-class VideoViewModel(private val app: Application): AndroidViewModel(app){
-
-    private val videoData = MutableLiveData<ArrayList<ContentData>>()
-
-    val data: LiveData<ArrayList<ContentData>>
-        get() = videoData
-
-    fun loadVideoData(){
-
-        val store = ContentStore(app)
-
-         viewModelScope.launch {
-
-             store.collectVideos()
-             videoData.value = store.getVideoData()
-         }
-
-    }
-
-}
+import java.lang.Exception
+import java.util.concurrent.Executors
 
 
 class VideoFragment : BaseFragment() {
+
+    class VideoViewModel(private val app: Application): AndroidViewModel(app){
+
+        private val videoData = MutableLiveData<ArrayList<ContentData>>()
+
+        val data: LiveData<ArrayList<ContentData>>
+            get() = videoData
+
+        fun loadVideoData(){
+
+            val store = ContentStore(app)
+
+            viewModelScope.launch {
+
+                store.collectVideos()
+                videoData.value = store.getVideoData()
+            }
+
+        }
+
+    }
+
 
     private lateinit var videoViewModel: VideoViewModel
     private lateinit var gridContentDataAdapter: ContentDataAdapter
@@ -46,7 +55,10 @@ class VideoFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
 
         videoViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(VideoViewModel::class.java)
-        gridContentDataAdapter = ContentDataAdapter(requireContext(), arrayListOf(),ContentDataAdapter.GRID_VIEW_TYPE)
+        gridContentDataAdapter = ContentDataAdapter(
+            this, arrayListOf(),
+            ContentDataAdapter.GRID_VIEW_TYPE
+        )
 
         if (savedInstanceState == null){
 
@@ -102,6 +114,13 @@ class VideoFragment : BaseFragment() {
            gridContentDataAdapter.setData(it)
         })
 
+        gridContentDataAdapter.setRecyclerViewItemClickListener(object :OnRecyclerViewItemClick{
+
+            override fun onItemClick(position: Int, view: View) {
+
+
+            }
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -111,12 +130,34 @@ class VideoFragment : BaseFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onBackPressed() {
-
+    override fun onBackPressed(): Boolean {
+        return true
     }
 
-    override fun onPermissionChanged() {
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun loadImage(imageView: ImageView, position: Int) {
 
+        Executors.newSingleThreadExecutor().execute {
+
+            try {
+
+                val b = videoViewModel.data.value?.get(position)?.uri?.let {
+                    requireContext().contentResolver.loadThumbnail(
+                        it, Size(240,320),null)
+                }
+
+                imageView.post {
+
+                    imageView.setImageBitmap(b)
+                }
+            }catch (e: Exception){
+
+                imageView.post {
+
+                    imageView.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_movie_24))
+                }
+            }
+        }
     }
 
     companion object {

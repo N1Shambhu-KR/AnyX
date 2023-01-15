@@ -1,6 +1,6 @@
 package com.a.anyx.fragment.adapter
 
-class AdapterSelection() {
+class AdapterSelection(private val singleSelection:Boolean) {
 
     val selection = ArrayList<Long>()
 
@@ -9,9 +9,24 @@ class AdapterSelection() {
         selection.addAll(arrayList)
     }
 
+    fun add(arrayList: ArrayList<Long>){
+        selection.addAll(arrayList)
+    }
+
+    fun add(id:Long){
+        selection.add(id)
+    }
+
     fun setSelection(id:Long){
 
-        if (!selection.contains(id)) selection.add(id) else selection.remove(id)
+        if (singleSelection){
+            selection.clear()
+            selection.add(id)
+
+        }else{
+            if (!selection.contains(id)) selection.add(id) else selection.remove(id)
+        }
+
     }
 
     fun getSelected(id:Long):Boolean{

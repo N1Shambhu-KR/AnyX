@@ -9,12 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.commit
 import com.a.anyx.R
+import com.a.anyx.activity.SendActivity
 import com.a.anyx.interfaces.IOnFragment
 import com.a.anyx.util.StateResolver
 import com.google.android.material.card.MaterialCardView
@@ -61,16 +64,12 @@ class StateResolverFragment : BaseFragment() {
         return null
     }
 
-    override fun onBackPressed() {
-
-    }
-
-    override fun onPermissionChanged() {
-
-    }
-
     override fun getTAG(): String? {
         return TAG
+    }
+
+    override fun onBackPressed(): Boolean {
+        return true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +143,6 @@ class StateResolverFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         locationContainer =
             view.findViewById<MaterialCardView?>(R.id.state_resolver_location_container)
         locationStateTextView =
@@ -207,7 +205,6 @@ class StateResolverFragment : BaseFragment() {
             setOnClickListener {
 
                 requireActivity().supportFragmentManager.popBackStack()
-
             }
         }
 
@@ -287,6 +284,10 @@ class StateResolverFragment : BaseFragment() {
             stateText.setText(resId)
             stateText.setTextColor(errorColor)
         }
+    }
+
+    override fun loadImage(imageView: ImageView, position: Int) {
+
     }
 
     companion object {
