@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Material3.CardView.Filled"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/small"
+    android:layout_marginTop="@dimen/tiny"
+    android:layout_marginEnd="@dimen/small"
+    android:layout_marginBottom="@dimen/tiny">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/send_receive_layout_type_image_holder"
+            style="@style/Widget.Material3.CardView.Filled"
+            android:layout_width="@dimen/display_icon_large"
+            android:layout_height="@dimen/display_icon_large"
+            android:layout_marginStart="@dimen/medium"
+            android:layout_marginTop="@dimen/medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/send_receive_layout_type_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout5"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/small"
+            android:layout_marginEnd="@dimen/small"
+            app:layout_constraintBottom_toBottomOf="@+id/send_receive_layout_type_image_holder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/send_receive_layout_type_image_holder"
+            app:layout_constraintTop_toTopOf="@+id/send_receive_layout_type_image_holder">
+
+            <TextView
+                android:id="@+id/send_receive_layout_file_name"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:text="kkfkfkyfkydkdckc"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                app:layout_constraintBottom_toTopOf="@+id/send_receive_layout_transfer_progress"
+                app:layout_constraintEnd_toStartOf="@+id/send_receive_layout_traffic"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/send_receive_layout_transfer_progress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/small"
+                android:indeterminate="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/send_receive_layout_file_name" />
+
+            <TextView
+                android:id="@+id/send_receive_layout_traffic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small"
+                android:text="TextView"
+                app:layout_constraintBottom_toBottomOf="@+id/send_receive_layout_file_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/send_receive_layout_file_name"
+                app:layout_constraintTop_toTopOf="@+id/send_receive_layout_file_name" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium"
+            android:layout_marginBottom="@dimen/medium"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout5"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+            <TextView
+                android:id="@+id/send_receive_layout_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tiny"
+                android:layout_marginTop="@dimen/tiny"
+                android:layout_marginEnd="@dimen/tiny"
+                android:layout_marginBottom="@dimen/tiny"
+                android:layout_weight="0.5"
+                android:text="@string/sending"
+                android:textAlignment="center"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="italic" />
+
+            <Button
+                android:id="@+id/send_receive_layout_action_complete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tiny"
+                android:layout_marginTop="@dimen/tiny"
+                android:layout_marginEnd="@dimen/tiny"
+                android:layout_marginBottom="@dimen/tiny"
+                android:layout_weight="0.5"
+                android:text="@string/cancel" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/send_receive_layout_file_length"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="384MB"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
+            app:layout_constraintEnd_toEndOf="@+id/send_receive_layout_type_image_holder"
+            app:layout_constraintStart_toStartOf="@+id/send_receive_layout_type_image_holder"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout6" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

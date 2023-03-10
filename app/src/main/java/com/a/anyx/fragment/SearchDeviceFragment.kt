@@ -1,6 +1,7 @@
 package com.a.anyx.fragment
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.IntentFilter
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.*
@@ -19,8 +20,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.a.anyx.P2pBroadcastReceiver
 import com.a.anyx.R
 import com.a.anyx.fragment.adapter.WifiP2pDeviceAdapter
+import com.a.anyx.fragment.base.BaseFragment
+import com.a.anyx.fragment.dialog.ConnectionDialogFragment
 import com.a.anyx.interfaces.OnRecyclerViewItemClick
 import com.a.anyx.interfaces.OnWiFiP2pChanged
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 
 
@@ -42,6 +47,10 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
     private lateinit var devices: MutableList<WifiP2pDevice>
     private lateinit var wifiP2pDeviceAdapter: WifiP2pDeviceAdapter
 
+    override fun sortList(sortType: SelectorFragment.SortType, desc: Boolean) {
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,7 +63,6 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
 
         //register a broadcast for receiving intents when there is change in the framework
         broadcastReceiver = P2pBroadcastReceiver(this, wifiP2pManager, channel)
-
 
         wifiP2pManager.requestGroupInfo(channel) {
 
@@ -99,6 +107,15 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<MaterialToolbar>(R.id.toolbar).apply {
+
+            setNavigationOnClickListener {
+
+                requireActivity().onBackPressed()
+            }
+
+        }
 
         deviceRecycler =
             view.findViewById<RecyclerView?>(R.id.fragment_search_device_recycler).also {
@@ -167,6 +184,7 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
 
     }
 
+
     override fun onResume() {
         super.onResume()
         requireContext().registerReceiver(broadcastReceiver, intentFilter)
@@ -213,17 +231,22 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
 
         if (wifiP2pInfo.groupFormed) {
 
+            childFragmentManager.findFragmentByTag(ConnectionDialogFragment.TAG)?.also {
+
+                (it as ConnectionDialogFragment).dismiss()
+            }
+
             Toast.makeText(requireContext(), wifiP2pInfo.toString(), Toast.LENGTH_SHORT).show()
 
+            var transferFragment =
+                requireActivity().supportFragmentManager.findFragmentByTag(TransferFragment.TAG)
 
-            var transferFragment = requireActivity().supportFragmentManager.findFragmentByTag(TransferFragment.TAG)
-
-            if (transferFragment == null){
+            if (transferFragment == null) {
                 transferFragment = TransferFragment().also {
                     it.arguments = Bundle().apply {
 
-                        putParcelable(TransferFragment.P2P_INFO,wifiP2pInfo)
-                        putInt(TransferFragment.TRANSFER_TYPE,TransferFragment.RECEIVE)
+                        putParcelable(TransferFragment.P2P_INFO, wifiP2pInfo)
+                        putInt(TransferFragment.TRANSFER_TYPE, TransferFragment.RECEIVE)
 
                     }
                 }
@@ -238,7 +261,7 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
                     R.anim.pop_exit_anim
                 )
                 addToBackStack(null)
-                replace(R.id.activity_receive_navigator,transferFragment,TransferFragment.TAG)
+                replace(R.id.activity_receive_navigator, transferFragment, TransferFragment.TAG)
             }
         }
     }
@@ -249,6 +272,15 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
 
     override fun onDiscoveryStopped() {
         discoveringView.visibility = View.GONE
+    }
+
+    override fun onBackPressed(): Boolean {
+
+        return true
+    }
+
+    override fun loadImage(imageView: ImageView, position: Int) {
+
     }
 
     private fun connect(device: WifiP2pDevice) {
@@ -264,18 +296,19 @@ class SearchDeviceFragment : BaseFragment(), OnWiFiP2pChanged, OnRecyclerViewIte
             }
 
             override fun onSuccess() {
-                Toast.makeText(requireContext(), "connect called", Toast.LENGTH_SHORT).show()
+
+                val dialog = ConnectionDialogFragment()
+                dialog.isCancelable = false
+                dialog.arguments = Bundle().apply {
+
+                    putString(ConnectionDialogFragment.DEVICE_NAME, device.deviceName)
+                }
+
+                dialog.show(childFragmentManager, ConnectionDialogFragment.TAG)
             }
         })
     }
 
-    override fun onBackPressed(): Boolean {
-        return true
-    }
-
-    override fun loadImage(imageView: ImageView, position: Int) {
-
-    }
 
     companion object {
         @JvmField

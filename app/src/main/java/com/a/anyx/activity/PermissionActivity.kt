@@ -66,7 +66,9 @@ class PermissionActivity : AppCompatActivity() {
         }
 
         letsGo = findViewById<Button?>(R.id.activity_permission_lets_go).apply {
-          //  isEnabled = false
+
+            isEnabled = false
+
             setOnClickListener {
                 val forwardClassComponent = intent.getStringExtra(AppConstants.INTENT_CLASS)
 

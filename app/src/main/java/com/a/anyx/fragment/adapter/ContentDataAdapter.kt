@@ -1,12 +1,8 @@
 package com.a.anyx.fragment.adapter
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.net.Uri
 import android.os.Build
-import android.util.Size
-import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -14,12 +10,11 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.a.anyx.R
 import com.a.anyx.content.ContentData
-import com.a.anyx.fragment.BaseFragment
-import com.a.anyx.fragment.FileFragment
+import com.a.anyx.fragment.base.BaseFragment
 import com.a.anyx.interfaces.OnRecyclerViewItemClick
-import java.util.concurrent.Executors
+import com.a.anyx.util.DataUtils
 
-class ContentDataAdapter(private val fragment: BaseFragment, private var data: ArrayList<ContentData>, private val viewType: Int):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ContentDataAdapter(private val fragment: BaseFragment, private var data: MutableList<ContentData>, private val viewType: Int):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object{
         const val LINEAR_VIEW_TYPE = 1
@@ -36,7 +31,7 @@ class ContentDataAdapter(private val fragment: BaseFragment, private var data: A
         listener = _listener
     }
 
-    fun setData(_data: ArrayList<ContentData>){
+    fun setData(_data: MutableList<ContentData>){
 
         data = _data
         notifyDataSetChanged()
@@ -61,11 +56,6 @@ class ContentDataAdapter(private val fragment: BaseFragment, private var data: A
         @RequiresApi(Build.VERSION_CODES.Q)
         fun bind(position: Int){
 
-            thumb.also {
-                fragment.loadImage(thumb,position)
-
-            }
-
             selection_overlay.visibility = if (adapterSelection.getSelected(getItemId(position))) View.VISIBLE else View.GONE
 
             checker.isChecked = adapterSelection.getSelected(getItemId(position))
@@ -73,6 +63,7 @@ class ContentDataAdapter(private val fragment: BaseFragment, private var data: A
             itemView.setOnClickListener {
 
                 listener?.onItemClick(position,it)
+
             }
 
             checker.setOnClickListener {
@@ -81,6 +72,7 @@ class ContentDataAdapter(private val fragment: BaseFragment, private var data: A
                 adapterSelection.setSelection(getItemId(position))
                 lastSelected = position
                 notifyItemChanged(lastSelected)
+
                 selection_overlay.visibility = if (adapterSelection.getSelected(getItemId(position))) View.VISIBLE else View.GONE
 
                 listener?.onItemClick(position,checker)
@@ -89,8 +81,9 @@ class ContentDataAdapter(private val fragment: BaseFragment, private var data: A
             name.setText(data[position].name).apply {
 
             }
-            size.text = data[position].length.toString()
+            size.text = DataUtils.bytesToReadableFormat(data[position].length!!)
 
+            fragment.loadImage(thumb,position)
          }
     }
 
@@ -105,11 +98,6 @@ class ContentDataAdapter(private val fragment: BaseFragment, private var data: A
         @RequiresApi(Build.VERSION_CODES.Q)
         fun bind(position: Int){
 
-            thumb.also {
-                fragment.loadImage(thumb,position)
-
-            }
-
             selection_overlay.visibility = if (adapterSelection.getSelected(getItemId(position))) View.VISIBLE else View.GONE
 
             checker.isChecked = adapterSelection.getSelected(getItemId(position))
@@ -130,6 +118,7 @@ class ContentDataAdapter(private val fragment: BaseFragment, private var data: A
                 listener?.onItemClick(position,checker)
             }
 
+            fragment.loadImage(thumb,position)
         }
     }
 

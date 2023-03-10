@@ -4,7 +4,7 @@ import java.net.Socket
 
 interface ConnectionListener{
 
-    fun onConnection()
+    fun onSocketConnection()
 
-    fun onDisconnect()
+    fun onSocketClose(ioError:Boolean)
 }

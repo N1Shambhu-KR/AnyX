@@ -7,4 +7,15 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="TitleLargeBold" parent="TextAppearance.Material3.TitleLarge">
+
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TitleLargePrimaryBold" parent="TextAppearance.Material3.TitleLarge">
+
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
 </resources>

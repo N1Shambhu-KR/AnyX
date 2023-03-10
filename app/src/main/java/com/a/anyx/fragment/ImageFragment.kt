@@ -1,64 +1,48 @@
 package com.a.anyx.fragment
 
-import android.app.Application
 import android.content.Context
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.commit
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.a.anyx.R
 import com.a.anyx.content.ContentData
 import com.a.anyx.fragment.adapter.ContentDataAdapter
-import com.a.anyx.content.ContentStore
+import com.a.anyx.fragment.base.BaseFragment
+import com.a.anyx.fragment.dialog.WhatFileFragment
 import com.a.anyx.interfaces.IOnFragment
 import com.a.anyx.interfaces.OnRecyclerViewItemClick
-import kotlinx.coroutines.launch
+import com.a.anyx.viewmodel.ContentViewModel
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
-import java.lang.Exception
 import java.util.concurrent.Executors
 
 
 class ImageFragment : BaseFragment() {
 
-    class ImageViewModel(private val app:Application):AndroidViewModel(app){
-
-        private val imageData = MutableLiveData<ArrayList<ContentData>>()
-
-        val data:LiveData<ArrayList<ContentData>>
-            get() = imageData
-
-        fun loadImageData(){
-
-            val store = ContentStore(app)
-
-            viewModelScope.launch {
-
-                store.collectImages()
-                imageData.value = store.getImageData()
-            }
-
-        }
-
-    }
-
-
-    private lateinit var imageViewModel: ImageViewModel
+    private lateinit var imageViewModel: ContentViewModel
 
     private lateinit var gridContentDataAdapter: ContentDataAdapter
     private lateinit var imageRecyclerView: RecyclerView
 
     private lateinit var selection: ArrayList<Long>
 
-    private lateinit var iOnFragment:IOnFragment
+    private lateinit var iOnFragment: IOnFragment
+
+    private val handler by lazy {
+        Handler(Looper.getMainLooper())
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -76,17 +60,27 @@ class ImageFragment : BaseFragment() {
         return true
     }
 
+    override fun sortList(sortType: SelectorFragment.SortType, desc: Boolean) {
+
+        imageViewModel.data.value?.also {
+            imageViewModel.sort(sortType,desc)
+        }
+
+    }
+
     override fun getSelectedFilePathItems(): ArrayList<String>? {
 
         val selectedContents = ArrayList<String>().apply {
 
-            for (d in imageViewModel.data.value!!){
+            imageViewModel.data.value?.also {
 
-                if (gridContentDataAdapter.getAdapterSelection().contains(d.hashCode().toLong()))
-                    add(d.path!!)
+                for (d in it) {
+
+                    if (gridContentDataAdapter.getAdapterSelection().contains(d.hashCode().toLong()))
+                        add(d.path!!)
+                }
             }
         }
-
 
         return selectedContents
     }
@@ -94,19 +88,22 @@ class ImageFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        imageViewModel = ViewModelProvider(this,ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(ImageViewModel::class.java)
-        gridContentDataAdapter = ContentDataAdapter(this, arrayListOf(), ContentDataAdapter.GRID_VIEW_TYPE)
+        imageViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
+        ).get(ContentViewModel::class.java)
+        gridContentDataAdapter =
+            ContentDataAdapter(this, arrayListOf(), ContentDataAdapter.GRID_VIEW_TYPE)
 
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
 
-            imageViewModel.loadImageData()
+            imageViewModel.loadData(SelectorFragment.IMAGES_DATA)
             gridContentDataAdapter.setAdapterSelection(arrayListOf())
-        }else{
+        } else {
 
             val selection = savedInstanceState.getStringArrayList("selection") as ArrayList<Long>
             gridContentDataAdapter.setAdapterSelection(selection)
         }
-
 
     }
 
@@ -115,7 +112,7 @@ class ImageFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        Log.d(TAG,"onCreateView")
+        Log.d(TAG, "onCreateView")
         return inflater.inflate(R.layout.fragment_image, container, false)
     }
 
@@ -126,9 +123,9 @@ class ImageFragment : BaseFragment() {
 
             setItemViewCacheSize(8)
             setHasFixedSize(true)
-            layoutManager = GridLayoutManager(requireContext(),4)
+            layoutManager = GridLayoutManager(requireContext(), 3)
 
-                adapter = gridContentDataAdapter
+            adapter = gridContentDataAdapter
 
         }
 
@@ -137,9 +134,39 @@ class ImageFragment : BaseFragment() {
             gridContentDataAdapter.setData(it)
         })
 
-        gridContentDataAdapter.setRecyclerViewItemClickListener(object :OnRecyclerViewItemClick{
+        gridContentDataAdapter.setRecyclerViewItemClickListener(object : OnRecyclerViewItemClick {
 
             override fun onItemClick(position: Int, view: View) {
+
+                if (view.id == R.id.base){
+
+                    WhatFileFragment().also {
+
+                        it.arguments = Bundle().apply {
+
+                            putParcelable("content",imageViewModel.data.value!![position])
+                        }
+
+                            requireActivity().supportFragmentManager.commit {
+                                setCustomAnimations(R.anim.slide_in_bottom_enter,R.anim.simple_fade_out,R.anim.simple_fade_in,R.anim.slide_out_bottom_exit)
+
+                                addToBackStack(null)
+                                replace(R.id.activity_send_navigator,it,WhatFileFragment.TAG)
+                            }
+
+                    }
+
+
+
+                }
+
+                if (view.id == R.id.checker){
+
+                    requireActivity().supportFragmentManager.findFragmentById(R.id.activity_send_navigator)?.also { it->
+
+                        if (it is SelectorFragment) it.updateSelectionCount()
+                    }
+                }
 
             }
         })
@@ -148,45 +175,58 @@ class ImageFragment : BaseFragment() {
 
     }
 
+
     override fun onSaveInstanceState(outState: Bundle) {
 
-        Log.d(ImageFragment.TAG,"onSavedInstanceState Called")
-        outState.putSerializable("selection",gridContentDataAdapter.getAdapterSelection())
+        outState.putSerializable("selection", gridContentDataAdapter.getAdapterSelection())
 
         super.onSaveInstanceState(outState)
     }
 
+
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun loadImage(imageView: ImageView, position: Int) {
 
-        Executors.newSingleThreadExecutor().execute {
+        handler.post {
 
-            try {
+            Executors.newSingleThreadExecutor().execute {
 
-                val b = imageViewModel.data.value?.get(position)?.uri?.let {
-                    requireContext().contentResolver.loadThumbnail(
-                        it,Size(240,320),null)
-                }
+                try {
 
-                imageView.post {
+                    val b = imageViewModel.data.value?.get(position)?.uri?.let {
+                        requireContext().contentResolver.loadThumbnail(
+                            it, Size(240, 320), null
+                        )
+                    }
 
-                    imageView.setImageBitmap(b)
-                }
-            }catch (e:Exception){
+                    imageView.post {
 
-                imageView.post {
+                        imageView.setImageBitmap(b)
+                    }
+                } catch (e: Exception) {
 
-                    imageView.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_image_24))
+                    imageView.post {
+
+                        imageView.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_baseline_image_24
+                            )
+                        )
+                    }
                 }
             }
         }
     }
 
-    companion object{
 
-        @JvmField val TAG:String = ImageFragment::class.simpleName!!
+    companion object {
 
-        @JvmStatic val DATA = ContentData::class.simpleName
+        @JvmField
+        val TAG: String = ImageFragment::class.simpleName!!
+
+        @JvmStatic
+        val DATA = ContentData::class.simpleName
 
         @JvmStatic
         fun newInstance() = ImageFragment()

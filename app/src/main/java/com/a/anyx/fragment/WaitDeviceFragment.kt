@@ -10,7 +10,6 @@ import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -18,12 +17,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.commit
 import com.a.anyx.P2pBroadcastReceiver
 import com.a.anyx.R
+import com.a.anyx.fragment.base.BaseFragment
 import com.a.anyx.interfaces.OnWiFiP2pChanged
 import com.a.anyx.view.SignalRipple
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
@@ -44,6 +46,10 @@ class WaitDeviceFragment : BaseFragment(), OnWiFiP2pChanged {
     private lateinit var signalRipple: SignalRipple
 
     private lateinit var p2pBroadcastReceiver: P2pBroadcastReceiver
+
+    override fun sortList(sortType: SelectorFragment.SortType, desc: Boolean) {
+
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,9 +99,17 @@ class WaitDeviceFragment : BaseFragment(), OnWiFiP2pChanged {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        view.findViewById<MaterialToolbar>(R.id.toolbar).apply {
+            setNavigationOnClickListener {
+
+                requireActivity().onBackPressed()
+            }
+
+        }
+
         qrImage = view.findViewById(R.id.fragment_wait_device_qr_image)
 
-        Toast.makeText(requireContext(),arguments?.getStringArrayList(TransferFragment.FILE_PATHS)?.size?.toString(),Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(),arguments?.getStringArrayList(TransferFragment.FILE_PATHS)?.size?.toString(),Toast.LENGTH_SHORT).show()
 
         signalRipple = view.findViewById(R.id.fragment_wait_device_signal_ripple)
 

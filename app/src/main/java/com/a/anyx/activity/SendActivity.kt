@@ -1,17 +1,19 @@
 package com.a.anyx.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
 import com.a.anyx.R
 import com.a.anyx.fragment.*
+import com.a.anyx.fragment.base.BaseFragment
 import com.a.anyx.interfaces.IOnFragment
 import com.a.anyx.util.StateResolver
 
 class SendActivity: BaseActivity(),IOnFragment{
 
-    private lateinit var currentFragment:BaseFragment
+    private lateinit var currentFragment: BaseFragment
 
     private lateinit var selectorFragment: SelectorFragment
 
@@ -41,17 +43,22 @@ class SendActivity: BaseActivity(),IOnFragment{
 
                 if (fragment is BaseFragment)
                 currentFragment = fragment
+
+                //Toast.makeText(this@SendActivity,currentFragment.getTAG(),Toast.LENGTH_SHORT).show()
             }
 
-
-            commit {
-
-                replace(R.id.activity_send_navigator,currentFragment,currentFragment.getTAG())
-            }
 
             addOnBackStackChangedListener {
 
                 currentFragment = supportFragmentManager.findFragmentById(R.id.activity_send_navigator)!! as BaseFragment
+
+                //Toast.makeText(this@SendActivity,currentFragment.getTAG(), Toast.LENGTH_SHORT).show()
+
+            }
+
+            commit{
+
+                replace(R.id.activity_send_navigator,currentFragment,currentFragment.getTAG())
             }
 
         }
@@ -73,6 +80,17 @@ class SendActivity: BaseActivity(),IOnFragment{
 
     override fun onBackPressed() {
 
-        if (currentFragment.onBackPressed()) super.onBackPressed()
+        if (currentFragment.onBackPressed()){
+
+            if (supportFragmentManager.backStackEntryCount > 0){
+
+                supportFragmentManager.popBackStackImmediate()
+                if (currentFragment is StateResolverFragment)
+                    onBackPressed()
+            }else{
+
+                super.onBackPressed()
+            }
+        }
     }
 }

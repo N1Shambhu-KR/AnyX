@@ -2,101 +2,178 @@ package com.a.anyx.util
 
 import android.os.Environment
 import androidx.annotation.Nullable
-import com.a.anyx.R
+import com.a.anyx.interfaces.ConnectionListener
 import com.a.anyx.interfaces.TransferEventListener
 import java.io.*
+import java.net.Socket
+import java.util.concurrent.Executors
+import kotlin.math.min
 
-class XFer(private val output:OutputStream,
-           private val input:InputStream,
-           @Nullable private val transferEventListener: TransferEventListener?) {
+class XFer(
+    private val socket: Socket,
+    @Nullable private val transferEventListener: TransferEventListener?,
+    @Nullable private val connectionListener: ConnectionListener?
+) {
 
-    private val dataOut:DataOutputStream = DataOutputStream(output)
-    private val dataIn:DataInputStream = DataInputStream(input)
+    private val dataOut: DataOutputStream = DataOutputStream(socket.getOutputStream())
+    private val dataIn: DataInputStream = DataInputStream(socket.getInputStream())
 
-    fun send(filePaths:ArrayList<String>){
+    var cancelIndex: Int = -1
 
-        dataOut.writeInt(filePaths.size)
+    fun send(filePaths: ArrayList<String>) {
 
-        for (path in filePaths){
+        Executors.newSingleThreadExecutor().execute {
 
-            val f = File(path)
+            //sot
+            transferEventListener?.onTransferSessionStart()
 
-            val buffer = ByteArray(4*1024)
-            var readLength = 0
+            /*tries to send files and throws IO exception when the socket is disconnected
+            * */
+            try {
 
-            dataOut.writeUTF(f.name)
-            dataOut.writeLong(f.length())
+                //writes the initial files array size
+                dataOut.writeInt(filePaths.size)
 
-            transferEventListener?.onStartTransfer(f)
+                //iterates through thr files array
+                for (i in 0 until filePaths.size) {
 
-            val fileInputStream = FileInputStream(f)
+                    //get the file associated with the file path
+                    val file = File(filePaths[i])
 
-            while (true){
+                    //checks if file exists
+                    if (file.exists()) {
 
-                readLength = fileInputStream.read(buffer)
+                        transferEventListener?.onStartTransfer(file, file.length())
 
-                if (readLength > 0) {
+                        //writes file name and file length to the stream
+                        dataOut.writeUTF(file.name)
+                        dataOut.writeLong(file.length())
 
-                    dataOut.write(buffer,0,readLength)
-                    transferEventListener?.onBytesTransferred(f,readLength)
-                } else{
+                        val buffer = ByteArray(4 * 1024)
+                        var bytesRead: Int = 0
+
+                        FileInputStream(file).use { fileInputStream ->
+
+                            while (true) {
+
+                                //read the buffer from the file input stream
+                                bytesRead = fileInputStream.read(buffer)
+
+                                //if the file has not eof
+                                if (bytesRead > 0) {
+                                    dataOut.write(buffer, 0, bytesRead)
+
+                                    transferEventListener?.onBytesTransferred(file, bytesRead)
+                                } else {
+
+                                    break
+                                }
+
+
+                            }
+
+                            fileInputStream.close()
+                            transferEventListener?.onFinishTransfer(file)
+                        }
+
+                    }
+                }
+
+            } catch (e: IOException) {
+
+                /*notify the host about connection loss or error when writing to the stream
+                 */
+                transferEventListener?.onSocketIOError()
+
+                connectionListener?.onSocketClose(true)
+            }
+
+            //eot
+            transferEventListener?.onTransferSessionEnd()
+        }
+
+    }
+
+    fun receive() {
+
+        Executors.newSingleThreadExecutor().execute {
+
+            /*when receiving files set the initial disconnected to false
+            */
+            var disconnected = false
+
+            transferEventListener?.onTransferSessionStart()
+
+            //reads the total files array being received
+            val fileCount = dataIn.readInt()
+
+            //iterate for the incoming stream bytes
+            for (i in 0 until fileCount) {
+
+                val fileName = dataIn.readUTF()
+                var fileLength = dataIn.readLong()
+
+                val buffer = ByteArray(4 * 1024)
+                var bytesReceived: Int
+
+                val outFile = File("${Environment.getExternalStorageDirectory()}/$fileName")
+
+                transferEventListener?.onStartReceive(outFile, fileLength)
+
+                /*looks through the input stream and reads the input's byte array
+                * and writes the byte array to the output stream associated with outFile if the cancelIndex is not current loop index e.g i
+                */
+                val fileOutputStream = FileOutputStream(outFile)
+
+                //reads from the input stream until fileLength or remaining fileLength is > 0
+                while (true) {
+
+                    if (fileLength > 0) {
+
+                        try {
+                            //reads the input stream for the remaining bytes
+                            bytesReceived =
+                                dataIn.read(buffer, 0, min(buffer.size, fileLength.toInt()))
+
+                            fileOutputStream.write(buffer, 0, bytesReceived)
+                            fileLength -= bytesReceived
+
+                            transferEventListener?.onBytesReceived(outFile, bytesReceived)
+                        }catch (e:IOException){
+
+                            /*if the socket gets disconnected then the bytesReceived will be -1
+                             *notify the host about connection loss or error when reading the stream
+                             */
+                            transferEventListener?.onSocketIOError()
+
+                            connectionListener?.onSocketClose(true)
+                            disconnected = true
+                            break
+                        }
+
+                    } else {
+
+                        break
+                    }
+
+                }
+
+                fileOutputStream.flush()
+
+                fileOutputStream.close()
+
+
+                if (disconnected) {
                     break
-                }
-
-            }
-
-            fileInputStream.close()
-
-            transferEventListener?.onFinishTransfer(f)
-
-        }
-
-        dataOut.close()
-        dataIn.close()
-
-    }
-
-    fun receive(){
-
-        val fileCount = dataIn.readInt()
-
-        for (i in 0 until fileCount){
-
-            val buffer = ByteArray(4*1024)
-            var readLength = 0
-
-            val fileName = dataIn.readUTF()
-            var fileLength = dataIn.readLong()
-
-            val parent = File("${Environment.getExternalStorageDirectory()}/${R.string.app_name}")
-
-            if (!parent.exists()){
-                parent.mkdir()
-            }
-
-            val f = File("${Environment.getExternalStorageDirectory()}/$fileName")
-
-            transferEventListener?.onStartReceive(f)
-
-            val fileOutputStream = FileOutputStream(f)
-
-            while (fileLength >0){
-
-                readLength = dataIn.read(buffer,0,Math.min(buffer.size,fileLength.toInt()))
-
-                if (readLength >0){
-                    fileOutputStream.write(buffer,0,readLength)
-                    transferEventListener?.onBytesReceived(f,readLength)
+                } else {
+                    transferEventListener?.onFinishReceive(outFile)
                 }
             }
 
-            fileOutputStream.close()
-
-            transferEventListener?.onFinishReceive(f)
+            transferEventListener?.onTransferSessionEnd()
         }
 
-        dataIn.close()
-        dataOut.close()
 
     }
+
 }

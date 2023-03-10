@@ -6,13 +6,13 @@ import android.provider.MediaStore
 
 class ContentStore(private val applicationContext: Context){
 
-    private val imageData = ArrayList<ContentData>()
-    private val videoData = ArrayList<ContentData>()
-    private val songData = ArrayList<ContentData>()
+    private val imageData:MutableList<ContentData> = mutableListOf()
+    private val videoData:MutableList<ContentData> = mutableListOf()
+    private val songData:MutableList<ContentData> = mutableListOf()
 
-    fun getImageData():ArrayList<ContentData> = imageData
-    fun getVideoData():ArrayList<ContentData> = videoData
-    fun getSongData():ArrayList<ContentData> = songData
+    fun getImageData():MutableList<ContentData> = imageData
+    fun getVideoData():MutableList<ContentData> = videoData
+    fun getSongData():MutableList<ContentData> = songData
 
     fun collectImages(){
 
@@ -32,8 +32,12 @@ class ContentStore(private val applicationContext: Context){
 
                 val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
                 val uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id)
+                var mimeType = "N/A"
+                applicationContext.contentResolver.getType(uri)?.also {
+                    mimeType = it
+                }
 
-                imageData.add(ContentData(name,uri,path,size,date))
+                imageData.add(ContentData(name, uri, path, size, date,mimeType))
             }
         }
         cursor.close()
@@ -58,8 +62,12 @@ class ContentStore(private val applicationContext: Context){
 
                 val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
                 val uri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,id)
+                var mimeType = "N/A"
+                applicationContext.contentResolver.getType(uri)?.also {
+                    mimeType = it
+                }
 
-                videoData.add(ContentData(name,uri,path,size,date))
+                videoData.add(ContentData(name, uri, path, size, date,mimeType))
             }
         }
         cursor.close()
@@ -84,8 +92,12 @@ class ContentStore(private val applicationContext: Context){
 
                 val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
                 val uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,id)
+                var mimeType = "N/A"
+                applicationContext.contentResolver.getType(uri)?.also {
+                    mimeType = it
+                }
 
-                songData.add(ContentData(name,uri,path,size, date))
+                songData.add(ContentData(name, uri, path, size, date,mimeType))
             }
         }
         cursor.close()

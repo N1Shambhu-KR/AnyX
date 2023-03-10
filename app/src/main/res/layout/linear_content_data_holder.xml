@@ -12,6 +12,20 @@
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/medium">
 
+    <FrameLayout
+        android:id="@+id/selection_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0.6"
+        android:background="?attr/colorPrimaryContainer"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
     <TextView
         android:id="@+id/linear_content_data_holder_size"
         android:layout_width="0dp"
@@ -50,24 +64,10 @@
         android:layout_marginTop="@dimen/tiny"
         android:layout_marginBottom="@dimen/tiny"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_baseline_folder_24"
+        android:src="@drawable/ic_baseline_insert_drive_file_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <FrameLayout
-        android:id="@+id/selection_overlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:alpha="0.6"
-        android:background="#AEAEAE"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </FrameLayout>
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/checker"

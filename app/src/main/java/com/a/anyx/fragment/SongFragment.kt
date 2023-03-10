@@ -1,15 +1,20 @@
 package com.a.anyx.fragment
 
-import android.app.Application
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginBottom
+import androidx.fragment.app.commit
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,8 +22,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.a.anyx.R
 import com.a.anyx.content.ContentData
 import com.a.anyx.fragment.adapter.ContentDataAdapter
-import com.a.anyx.content.ContentStore
-import kotlinx.coroutines.launch
+import com.a.anyx.fragment.base.BaseFragment
+import com.a.anyx.fragment.dialog.WhatFileFragment
+import com.a.anyx.interfaces.OnRecyclerViewItemClick
+import com.a.anyx.viewmodel.ContentViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.Exception
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
@@ -26,42 +34,31 @@ import kotlin.collections.ArrayList
 
 class SongFragment : BaseFragment() {
 
-    class SongViewModel(private val app: Application): AndroidViewModel(app){
 
-        private val songData = MutableLiveData<ArrayList<ContentData>>()
-
-        val data: LiveData<ArrayList<ContentData>>
-            get() = songData
-
-        fun loadSongData(){
-
-            val store = ContentStore(app)
-
-            viewModelScope.launch {
-
-                store.collectSongs()
-                songData.value = store.getSongData()
-            }
-
-        }
-
-    }
-
-
-    private lateinit var songViewModel: SongViewModel
+    private lateinit var songViewModel: ContentViewModel
 
     private lateinit var linearContentDataAdapter: ContentDataAdapter
     private lateinit var songRecyclerView: RecyclerView
+
+    private val handler by lazy {
+        Handler(Looper.getMainLooper())
+    }
 
     override fun getTAG(): String? {
         return TAG
     }
 
+    override fun sortList(sortType: SelectorFragment.SortType, desc: Boolean) {
+
+        songViewModel.sort(sortType,desc)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         songViewModel = ViewModelProvider(this,
-            ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(SongViewModel::class.java)
+            ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(ContentViewModel::class.java)
         linearContentDataAdapter  = ContentDataAdapter(
             this, arrayListOf(),
             ContentDataAdapter.LINEAR_VIEW_TYPE
@@ -69,7 +66,7 @@ class SongFragment : BaseFragment() {
 
         if (savedInstanceState == null){
 
-            songViewModel.loadSongData()
+            songViewModel.loadData(SelectorFragment.SONGS_DATA)
             linearContentDataAdapter.setAdapterSelection(arrayListOf())
         }else{
 
@@ -92,10 +89,13 @@ class SongFragment : BaseFragment() {
 
         val selectedContents = ArrayList<String>().apply {
 
-            for(d in songViewModel.data.value!!){
+            songViewModel.data.value?.also {
 
-                if (linearContentDataAdapter.getAdapterSelection().contains(d.hashCode().toLong()))
-                    add(d.path!!)
+                for(d in it){
+
+                    if (linearContentDataAdapter.getAdapterSelection().contains(d.hashCode().toLong()))
+                        add(d.path!!)
+                }
             }
         }
         return selectedContents
@@ -116,6 +116,44 @@ class SongFragment : BaseFragment() {
             linearContentDataAdapter.setData(it)
         })
 
+        linearContentDataAdapter.setRecyclerViewItemClickListener(object :OnRecyclerViewItemClick{
+
+            override fun onItemClick(position: Int, view: View) {
+
+                if (view.id == R.id.base){
+
+                    WhatFileFragment().also {
+
+                        it.arguments = Bundle().apply {
+
+                            putParcelable("content",songViewModel.data.value!![position])
+                        }
+
+                        requireActivity().supportFragmentManager.commit {
+                            setCustomAnimations(R.anim.slide_in_bottom_enter,R.anim.simple_fade_out,R.anim.simple_fade_in,R.anim.slide_out_bottom_exit)
+
+                            addToBackStack(null)
+                            replace(R.id.activity_send_navigator,it,WhatFileFragment.TAG)
+                        }
+
+
+                    }
+
+
+
+
+                }
+
+                if (view.id == R.id.checker){
+
+                    requireActivity().supportFragmentManager.findFragmentById(R.id.activity_send_navigator)?.also { it->
+
+                        if (it is SelectorFragment) it.updateSelectionCount()
+                    }
+                }
+
+            }
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -126,29 +164,33 @@ class SongFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
+
         return true
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun loadImage(imageView: ImageView, position: Int) {
 
-        Executors.newSingleThreadExecutor().execute {
+        handler.post {
 
-            try {
+            Executors.newSingleThreadExecutor().execute {
 
-                val b = songViewModel.data.value?.get(position)?.uri?.let {
-                    requireContext().contentResolver.loadThumbnail(
-                        it, Size(240,320),null)
-                }
+                try {
 
-                imageView.post {
-                    imageView.setImageBitmap(b)
-                }
-            }catch (e: Exception){
+                    val b = songViewModel.data.value?.get(position)?.uri?.let {
+                        requireContext().contentResolver.loadThumbnail(
+                            it, Size(240,320),null)
+                    }
 
-                imageView.post {
+                    imageView.post {
+                        imageView.setImageBitmap(b)
+                    }
+                }catch (e: Exception){
 
-                    imageView.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_audiotrack_24))
+                    imageView.post {
+
+                        imageView.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_audiotrack_24))
+                    }
                 }
             }
         }

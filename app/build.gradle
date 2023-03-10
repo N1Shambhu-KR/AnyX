@@ -52,4 +52,6 @@ dependencies {
     implementation 'me.zhanghai.android.fastscroll:library:1.1.8'
     implementation 'com.google.zxing:core:3.4.0'
 
+    implementation 'io.reactivex.rxjava3:rxjava:2.5.0'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 }

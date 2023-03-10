@@ -3,9 +3,7 @@ package com.a.anyx.service
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import com.a.anyx.interfaces.ConnectionListener
 import com.a.anyx.interfaces.TransferEventListener
 import com.a.anyx.util.XFer
@@ -17,11 +15,13 @@ import java.util.concurrent.Executors
 
 class SocketCommunicationService : Service() {
 
-    private lateinit var serverSocket: ServerSocket
-    private lateinit var socket: Socket
+    private var serverSocket: ServerSocket? = null
+    private var socket: Socket? = null
 
     private var transferEventListener:TransferEventListener? = null
     private var connectionListener: ConnectionListener? = null
+
+    private lateinit var xFer:XFer
 
     inner class LocalBinder:Binder(){
 
@@ -39,12 +39,14 @@ class SocketCommunicationService : Service() {
         Executors.newSingleThreadExecutor().execute {
 
             serverSocket = ServerSocket(8888)
-            serverSocket.soTimeout = 15000
-            serverSocket.reuseAddress = true
+            serverSocket?.soTimeout = 15000
+            serverSocket?.reuseAddress = true
 
-            socket = serverSocket.accept()
+            socket = serverSocket?.accept()
 
-                connectionListener?.onConnection()
+
+            xFer = XFer(socket!!,transferEventListener,connectionListener)
+            connectionListener?.onSocketConnection()
         }
     }
 
@@ -66,7 +68,8 @@ class SocketCommunicationService : Service() {
                 }
             }
 
-                connectionListener?.onConnection()
+            xFer = XFer(socket!!,transferEventListener,connectionListener)
+            connectionListener?.onSocketConnection()
 
         }
 
@@ -74,25 +77,17 @@ class SocketCommunicationService : Service() {
 
     fun send(filesArray: ArrayList<String>){
 
-        socket.also {
+        socket?.also {
 
-            Executors.newSingleThreadExecutor().execute {
-                val transfer = XFer(it.getOutputStream(),it.getInputStream(),transferEventListener)
-                transfer.send(filesArray)
-            }
-
+                xFer.send(filesArray)
         }
     }
 
     fun receive(){
 
-        socket.also {
+        socket?.also {
 
-            Executors.newSingleThreadExecutor().execute {
-                val transfer = XFer(it.getOutputStream(),it.getInputStream(),transferEventListener)
-                transfer.receive()
-            }
-
+                xFer.receive()
         }
     }
 
@@ -116,6 +111,23 @@ class SocketCommunicationService : Service() {
         if (connectionListener != null){
             connectionListener = null
         }
+    }
+
+    fun disconnect(){
+
+        if (socket != null){
+            socket?.close()
+        }
+
+        if (serverSocket != null){
+            serverSocket?.close()
+        }
+
+    }
+
+    fun cancelSendAt(position:Int){
+
+        xFer.cancelIndex = position
     }
 
     companion object{

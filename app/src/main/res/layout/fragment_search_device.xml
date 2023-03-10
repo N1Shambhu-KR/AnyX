@@ -12,6 +12,7 @@
         app:liftOnScroll="true">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
@@ -39,11 +40,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_search_device_recycler"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small"
             android:layout_marginEnd="@dimen/small"
-            android:layout_marginBottom="@dimen/small"
-            app:layout_constraintBottom_toTopOf="@+id/fragment_search_device_tap_to_receive"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_search_device_discover">
@@ -59,6 +58,8 @@
             android:layout_marginEnd="@dimen/tiny"
             android:layout_marginBottom="@dimen/small"
             android:text="@string/scan"
+            app:icon="@drawable/ic_baseline_search_24"
+            app:iconGravity="textStart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fragment_search_device_connect"
             app:layout_constraintHorizontal_bias="0.5"
@@ -87,13 +88,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small"
             android:layout_marginEnd="@dimen/small"
-            android:layout_marginBottom="@dimen/small"
             android:gravity="center_horizontal|top"
             android:text="@string/tap_to_send"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             app:layout_constraintBottom_toTopOf="@+id/fragment_search_device_connect"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_search_device_recycler" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

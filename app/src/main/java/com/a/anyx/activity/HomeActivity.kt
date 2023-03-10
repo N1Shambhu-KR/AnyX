@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import com.a.anyx.AppConstants
 import com.a.anyx.R
+import com.a.anyx.fragment.dialog.ConnectionDialogFragment
 import com.a.anyx.util.PermissionChecker
 
 class HomeActivity : AppCompatActivity() {
@@ -13,6 +14,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        //startActivity(Intent(this,ReActivity::class.java))
         val pc = PermissionChecker(this)
 
         findViewById<Button>(R.id.activity_home_send_action).apply {
@@ -47,5 +49,6 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 }

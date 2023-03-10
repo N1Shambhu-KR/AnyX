@@ -21,12 +21,41 @@
 
     <string name="sort_order_descending">Descending</string>
 
-    <string name="send_connection_signal">Send Connection Signal</string>
+    <string name="connected">Connected</string>
 
+    <string name="sending">Sending</string>
+    <string name="receiving">Receiving</string>
+    <string name="in_progress">In progress</string>
+    <string name="error">Error</string>
+    <string name="received">Received</string>
+    <string name="sent">Sent</string>
+    <string name="open">Open</string>
+    <string name="newest_first">Newest first</string>
+    <string name="oldest_first">Oldest first</string>
+
+    <string name="largest_first">Largest first</string>
+    <string name="smallest_first">Smallest first</string>
+
+    <string name="open_with">Open with</string>
+
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+
+    <string name="close">Close</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="continue_send">Continue sending</string>
+    <string name="files">Files</string>
+    <string name="a_z">A-Z</string>
+    <string name="z_a">Z-A</string>
+    <string name="sort_by">Sort by</string>
+    <string name="send_connection_signal">Send Connection Signal</string>
+    <string name="search">Search</string>
     <string name="speed">Speed</string>
     <string name="total">Total</string>
-    <string name="received">Received</string>
-
+    <string name="cancel">Cancel</string>
     <string name="checking_permissions">Checking Permissions</string>
     <string name="android_location_access">Android Location Access</string>
     <string name="android_storage_access">Access files</string>
@@ -60,10 +89,10 @@
         <item>dummy</item>
         <item>dummy</item>
     </string-array>
-<string name="scan">Scan</string>
+    <string name="scan">Scan</string>
 
     <string name="details">Details</string>
-     <string name="path">File path</string>
+    <string name="path">File path</string>
     <string name="name">Name</string>
     <string name="size">Size</string>
     <string name="tap_to_receive">Tap <b>Receive</b> on other devices</string>
@@ -78,5 +107,17 @@
     <string name="title_activity_permission">PermissionActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_re">ReActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="file_info">File info</string>
+    <string name="turn_on_necessary_wireless_services">"Give AnyX necessary wireless access"</string>
+    <string name="before_you_share">Before you share</string>
 
 </resources>

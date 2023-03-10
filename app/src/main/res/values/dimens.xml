@@ -11,5 +11,9 @@
     <dimen name="default_icon_size_medium">24dp</dimen>
     <dimen name="display_icon_large">64dp</dimen>
     <dimen name="display_icon_larger">128dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="send_receive_layout_common_margin">80dp</dimen>
+
+    <dimen name="mini_player_container">80dp</dimen>
 </resources>

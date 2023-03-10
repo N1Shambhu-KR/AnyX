@@ -71,9 +71,9 @@ class WifiP2pDeviceAdapter(private val applicationContext:Context,private val it
                 adapterSelection.setSelection(getItemId(position))
                 selectedPosition = position
                 notifyItemChanged(selectedPosition)
-                itemView.background = if (adapterSelection.getSelected(getItemId(position))) ContextCompat.getDrawable(applicationContext,R.drawable.bg_wifi_p2p_device_layout) else null
+                it.background = if (adapterSelection.getSelected(getItemId(position))) ContextCompat.getDrawable(applicationContext,R.drawable.bg_wifi_p2p_device_layout) else null
 
-                listener?.onItemClick(position,itemView)
+                listener?.onItemClick(position,it)
             }
         }
     }

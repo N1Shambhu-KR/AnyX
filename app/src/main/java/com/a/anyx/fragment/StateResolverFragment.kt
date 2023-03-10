@@ -15,11 +15,15 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.commit
 import com.a.anyx.R
 import com.a.anyx.activity.SendActivity
+import com.a.anyx.fragment.base.BaseFragment
 import com.a.anyx.interfaces.IOnFragment
 import com.a.anyx.util.StateResolver
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
 
@@ -40,13 +44,10 @@ class StateResolverFragment : BaseFragment() {
     private lateinit var wifiSettingsLauncher: ActivityResultLauncher<Intent>
     private lateinit var bluetoothSettingsLauncher: ActivityResultLauncher<Intent>
 
-    private lateinit var locationContainer: MaterialCardView
     private lateinit var locationStateTextView: TextView
 
-    private lateinit var wifiContainer: MaterialCardView
     private lateinit var wifiStateTextView: TextView
 
-    private lateinit var bluetoothContainer: MaterialCardView
     private lateinit var bluetoothStateTextView: TextView
 
     private lateinit var letsGo: Button
@@ -72,6 +73,10 @@ class StateResolverFragment : BaseFragment() {
         return true
     }
 
+    override fun sortList(sortType: SelectorFragment.SortType, desc: Boolean) {
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -84,7 +89,6 @@ class StateResolverFragment : BaseFragment() {
                     override fun onActivityResult(result: ActivityResult?) {
 
                         setState(
-                            locationContainer,
                             locationStateTextView,
                             stateResolver.getLocationState(),
                             if (stateResolver.getLocationState()) R.string.location_enabled else R.string.location_disabled
@@ -101,7 +105,6 @@ class StateResolverFragment : BaseFragment() {
                     override fun onActivityResult(result: ActivityResult?) {
 
                         setState(
-                            wifiContainer,
                             wifiStateTextView,
                             stateResolver.getWifiState(),
                             if (stateResolver.getWifiState()) R.string.wifi_enabled else R.string.wifi_disabled
@@ -118,7 +121,6 @@ class StateResolverFragment : BaseFragment() {
                     override fun onActivityResult(result: ActivityResult?) {
 
                         setState(
-                            bluetoothContainer,
                             bluetoothStateTextView,
                             stateResolver.getBluetoothState(),
                             if (stateResolver.getBluetoothState()) R.string.bluetooth_enabled else R.string.bluetooth_disabled
@@ -143,22 +145,23 @@ class StateResolverFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        locationContainer =
-            view.findViewById<MaterialCardView?>(R.id.state_resolver_location_container)
+
+        view.findViewById<MaterialToolbar>(R.id.toolbar).setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         locationStateTextView =
             view.findViewById<TextView?>(R.id.state_resolver_location_state)
 
-        wifiContainer =
-            view.findViewById<MaterialCardView?>(R.id.state_resolver_wifi_container)
-
         wifiStateTextView = view.findViewById(R.id.state_resolver_wifi_state)
 
-        bluetoothContainer = view.findViewById(R.id.state_resolver_bluetooth_container)
         bluetoothStateTextView = view.findViewById(R.id.state_resolver_bluetooth_state)
 
         locationSetting = view.findViewById<Button?>(R.id.state_resolver_location_settings).apply {
+
+            (this as MaterialButton).icon = if (stateResolver.getLocationState()) ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_check_24) else ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_location_on_24)
+
             setState(
-                locationContainer,
                 locationStateTextView,
                 stateResolver.getLocationState(),
                 if (stateResolver.getLocationState()) R.string.location_enabled else R.string.location_disabled
@@ -171,8 +174,10 @@ class StateResolverFragment : BaseFragment() {
         }
 
         wifiSettings = view.findViewById<Button?>(R.id.state_resolver_wifi_settings).apply {
+
+            (this as MaterialButton).icon = if (stateResolver.getWifiState()) ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_check_24) else ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_wifi_24)
+
             setState(
-                wifiContainer,
                 wifiStateTextView,
                 stateResolver.getWifiState(),
                 if (stateResolver.getWifiState()) R.string.wifi_enabled else R.string.wifi_disabled
@@ -183,10 +188,11 @@ class StateResolverFragment : BaseFragment() {
             }
         }
 
-        bluetoothSettings =
-            view.findViewById<Button?>(R.id.state_resolver_bluetooth_settings).apply {
-                setState(
-                    bluetoothContainer,
+        bluetoothSettings = view.findViewById<Button?>(R.id.state_resolver_bluetooth_settings).apply {
+
+            (this as MaterialButton).icon = if (stateResolver.getBluetoothState()) ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_check_24) else ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_bluetooth_24)
+
+            setState(
                     bluetoothStateTextView,
                     stateResolver.getBluetoothState(),
                     if (stateResolver.getBluetoothState()) R.string.bluetooth_enabled else R.string.bluetooth_disabled
@@ -195,7 +201,7 @@ class StateResolverFragment : BaseFragment() {
                 setOnClickListener {
                     bluetoothSettingsLauncher.launch(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
                 }
-            }
+        }
 
         letsGo = view.findViewById<Button?>(R.id.state_resolver_lets_go).apply {
 
@@ -204,33 +210,70 @@ class StateResolverFragment : BaseFragment() {
 
             setOnClickListener {
 
-                requireActivity().supportFragmentManager.popBackStack()
+                if (requireActivity()::class.simpleName.equals(SendActivity::class.simpleName)){
+
+                    requireActivity().supportFragmentManager.commit {
+
+                        setCustomAnimations(
+                            R.anim.enter_anim,
+                            R.anim.exit_anim,
+                            R.anim.pop_enter_anim,
+                            R.anim.pop_exit_anim
+                        )
+                        addToBackStack(null)
+                        replace(
+                            R.id.activity_send_navigator,
+                            WaitDeviceFragment(),WaitDeviceFragment.TAG
+                        )
+                    }
+                }else{
+
+                    requireActivity().supportFragmentManager.commit {
+
+                        setCustomAnimations(
+                            R.anim.enter_anim,
+                            R.anim.exit_anim,
+                            R.anim.pop_enter_anim,
+                            R.anim.pop_exit_anim
+                        )
+                        addToBackStack(null)
+                        replace(
+                            R.id.activity_receive_navigator,
+                            SearchDeviceFragment(),SearchDeviceFragment.TAG
+                        )
+                    }
+                }
             }
         }
 
         view.viewTreeObserver.addOnWindowFocusChangeListener {
             if (it) {
+
+                (locationSetting as MaterialButton).icon = if (stateResolver.getLocationState()) ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_check_24) else ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_location_on_24)
+
                 setState(
-                    locationContainer,
                     locationStateTextView,
                     stateResolver.getLocationState(),
                     if (stateResolver.getLocationState()) R.string.location_enabled else R.string.location_disabled
                 )
+
+                (wifiSettings as MaterialButton).icon = if (stateResolver.getWifiState()) ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_check_24) else ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_wifi_24)
+
                 setState(
-                    wifiContainer,
                     wifiStateTextView,
                     stateResolver.getWifiState(),
                     if (stateResolver.getWifiState()) R.string.wifi_enabled else R.string.wifi_disabled
                 )
+
+                (bluetoothSettings as MaterialButton).icon = if (stateResolver.getBluetoothState()) ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_check_24) else ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_bluetooth_24)
+
                 setState(
-                    bluetoothContainer,
                     bluetoothStateTextView,
                     stateResolver.getBluetoothState(),
                     if (stateResolver.getBluetoothState()) R.string.bluetooth_enabled else R.string.bluetooth_disabled
                 )
 
-                letsGo.isEnabled =
-                    stateResolver.getBluetoothState() && stateResolver.getWifiState() && stateResolver.getLocationState()
+                letsGo.isEnabled = stateResolver.getBluetoothState() && stateResolver.getWifiState() && stateResolver.getLocationState()
             }
         }
 
@@ -267,20 +310,17 @@ class StateResolverFragment : BaseFragment() {
     }
 
     private fun setState(
-        container: MaterialCardView,
         stateText: TextView,
         state: Boolean,
         resId: Int
     ) {
 
         if (state) {
-            container.setCardBackgroundColor(primaryContainerColor)
             stateText.setText(resId)
             stateText.setTextColor(primaryColor)
 
         } else {
 
-            container.setCardBackgroundColor(errorContainerColor)
             stateText.setText(resId)
             stateText.setTextColor(errorColor)
         }
